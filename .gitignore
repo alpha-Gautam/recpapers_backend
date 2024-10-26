@@ -1,0 +1,7 @@
+
+venv
+.env
+recpaper_app/__pycache__
+recpaper_app/api/__pycache__
+recpaper_app/migrations/__pycache__
+recpapers_backend/__pycache__
