@@ -1,4 +1,5 @@
 from django.urls import path, include
+
 from recpaper_app.api.views import UserListView, user_detail, paper_list, paper_detail
 
 urlpatterns = [

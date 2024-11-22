@@ -1,5 +1,5 @@
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, APIView
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 from recpaper_app.models import User,Paper
 from recpaper_app.api.serializers import UserSerializer,PaperSerializer
