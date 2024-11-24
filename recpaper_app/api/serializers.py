@@ -6,10 +6,17 @@ class UserSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     name = serializers.CharField()
     roll_no = serializers.CharField()
-    email = serializers.CharField()
+    email = serializers.EmailField()
+    password=serializers.CharField(write_only=True)
     college = serializers.CharField()
     branch = serializers.CharField()
     designation = serializers.CharField()
+    
+    def validate_email(self, value):
+       # Check if the email already exists
+       if User.objects.filter(email=value).exists():
+           raise serializers.ValidationError("This email is already exists.")
+       return value
     
     # this will create a new user object in database and return it
     def create(self, validated_data):
@@ -32,15 +39,26 @@ class PaperSerializer(serializers.Serializer):
     objective = serializers.CharField()
     platform = serializers.CharField()
     description = serializers.CharField()
+    user=serializers.CharField()
+    mentor=serializers.CharField()
+    
+    # title=models.CharField(max_length=50)
+    # objective=models.CharField(max_length=500)
+    # platform=models.CharField(max_length=100)
+    # description=models.CharField(max_length=200)
+    # user=models.ForeignKey(User,on_delete=models.CASCADE)
+    # mentor=models.CharField(max_length=50)
+    
+    
 
     def create(self, validated_data):
         return Paper.objects.create(**validated_data)
     
-    def update(self, instance, validated_data):
-        instance.title = validated_data.get('title',instance.title)
-        instance.objective = validated_data.get('objective',instance.objective)
-        instance.platform = validated_data.get('platform',instance.platform)
-        instance.description = validated_data.get('description',instance.description)
-        instance.save()
-        return instance
+    # def update(self, instance, validated_data):
+    #     instance.title = validated_data.get('title',instance.title)
+    #     instance.objective = validated_data.get('objective',instance.objective)
+    #     instance.platform = validated_data.get('platform',instance.platform)
+    #     instance.description = validated_data.get('description',instance.description)
+    #     instance.save()
+    #     return instance
 

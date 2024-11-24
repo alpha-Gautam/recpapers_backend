@@ -12,25 +12,63 @@ class UserListView(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
+    
+class PaperListView(generics.ListCreateAPIView):
+    queryset = Paper.objects.all()
+    serializer_class = PaperSerializer
+    permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
+    
 
 @api_view(["GET","PUT","DELETE"])
-def user_detail(request, pk):
+def user_login(request):
     if request.method == "GET":
-        user = User.objects.get(pk=pk)
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
-    if request.method == "PUT":
-        user = User.objects.get(pk=pk)
-        serializer = UserSerializer(user,data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+        email = request.data.get('email', None)
+        password = request.data.get('password', None)
+        if email is not None and password is not None:
+            try:
+                user_data = User.objects.filter(email=email).first()
+                if user_data and user_data.password == password:
+                    serializer = UserSerializer(user_data)
+                    return Response(serializer.data)
+                else:
+                    return Response({'status': 'error', 'message': 'Password is incorrect.'})
+                # return Response({'status': 'success', 'message': 'Student exists.'})
+            except:
+                return Response({'status': 'error', 'message': 'Student does not exist.'})
         else:
-            return Response(serializer.errors)
-    if request.method == "DELETE":
-        user = User.objects.get(pk=pk)
-        user.delete()
-        return Response(user,status=status.HTTP_204_NO_CONTENT)
+            return Response({'status': 'error', 'message': 'Email and password are required.'})
+        
+    # if request.method == "PUT":
+    #     user = User.objects.get(pk=pk)
+    #     serializer = UserSerializer(user,data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     else:
+    #         return Response(serializer.errors)
+    # if request.method == "DELETE":
+    #     user = User.objects.get(pk=pk)
+    #     user.delete()
+    #     return Response(user,status=status.HTTP_204_NO_CONTENT)
+    
+# @api_view(["GET","PUT","DELETE"])
+# def user_detail(request, pk):
+#     if request.method == "GET":
+#         user = User.objects.get(pk=pk)
+#         serializer = UserSerializer(user)
+#         return Response(serializer.data)
+#     if request.method == "PUT":
+#         user = User.objects.get(pk=pk)
+#         serializer = UserSerializer(user,data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         else:
+#             return Response(serializer.errors)
+#     if request.method == "DELETE":
+#         user = User.objects.get(pk=pk)
+#         user.delete()
+#         return Response(user,status=status.HTTP_204_NO_CONTENT)
     
     
     
