@@ -1,6 +1,10 @@
 
 venv
 .env
+mentors_app/__pycache__
+authentication_app/__pycache__
+mentors_app/migrations/__pycache__
+authentication_app/migrations/__pycache__
 recpaper_app/__pycache__
 recpaper_app/api/__pycache__
 recpaper_app/migrations/__pycache__

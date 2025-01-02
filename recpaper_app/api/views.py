@@ -1,47 +1,19 @@
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, APIView
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
-from recpaper_app.models import User,Paper
-from recpaper_app.api.serializers import UserSerializer,PaperSerializer
-from rest_framework import status
+from recpaper_app.models import User,Project, Keyword
+from recpaper_app.api.serializers import UserSerializer,ProjectSerializer,KeywordSerializer
+from rest_framework import status, authentication, permissions
 from rest_framework import generics
 
-# User Views
-
-class UserListView(generics.ListCreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
-
-@api_view(["GET","PUT","DELETE"])
-def user_detail(request, pk):
+@api_view(["GET","POST","PUT","PATCH", "DELETE"])    
+def user_view(request):
     if request.method == "GET":
-        user = User.objects.get(pk=pk)
-        serializer = UserSerializer(user)
+        papers = User.objects.all()
+        serializer = UserSerializer(papers,many=True)
         return Response(serializer.data)
-    if request.method == "PUT":
-        user = User.objects.get(pk=pk)
-        serializer = UserSerializer(user,data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
-    if request.method == "DELETE":
-        user = User.objects.get(pk=pk)
-        user.delete()
-        return Response(user,status=status.HTTP_204_NO_CONTENT)
-    
-    
-    
-@api_view(["GET","POST"])
-def paper_list(request):
-    if request.method == "GET":
-        papers = Paper.objects.all()
-        serializer = PaperSerializer(papers,many=True)
-        return Response(serializer.data)
-    if request.method == "POST":
-        serializer = PaperSerializer(data=request.data)
+    elif request.method == "POST":
+        serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -49,22 +21,90 @@ def paper_list(request):
             return Response(serializer.errors)
         
         
-
-@api_view(["GET","PUT","DELETE"])
-def paper_detail(request, pk):
+@api_view(["GET","POST","PUT","PATCH", "DELETE"])    
+def keyword_view(request):
     if request.method == "GET":
-        paper = Paper.objects.get(pk=pk)
-        serializer = PaperSerializer(paper)
+        papers = Keyword.objects.all()
+        serializer = KeywordSerializer(papers,many=True)
         return Response(serializer.data)
-    if request.method == "PUT":
-        paper = Paper.objects.get(pk=pk)
-        serializer = PaperSerializer(paper,data=request.data)
+    elif request.method == "POST":
+        serializer = KeywordSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
-    if request.method == "DELETE":
-        paper = Paper.objects.get(pk=pk)
-        paper.delete()
-        return Response(paper,status=status.HTTP_204_NO_CONTENT)
+    
+    
+    
+@api_view(["GET","POST","PUT","PATCH", "DELETE"])
+def project_view(request):
+    if request.method == "GET":
+        papers = Project.objects.all()
+        serializer = ProjectSerializer(papers,many=True)
+        return Response(serializer.data)
+    elif request.method == "POST":
+        serializer = ProjectSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+        
+    elif request.method == "DELETE":
+        project_id = request.data.get('id')
+        if not project_id:
+            return Response({"error": "Project ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            project = Project.objects.get(id=project_id)
+            project.delete()
+            return Response({"message": "Project deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+        except Project.DoesNotExist:
+            return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
+    # if request.method == "PUT":
+    #     serializer = ProjectSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     else:
+    #         return Response(serializer.errors)
+        
+        
+    
+@api_view(["GET","POST","PUT","PATCH", "DELETE"])
+def project_detail(request, pk):
+    if request.method == "GET":
+        papers = Project.objects.filter(project_uuid=pk)
+        if not papers.exists():
+            return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = ProjectSerializer(papers.first())
+        return Response(serializer.data)
+    # elif request.method == "POST":
+    #     serializer = ProjectSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     else:
+    #         return Response(serializer.errors)
+        
+    elif request.method == "DELETE":
+        # project_uuid = request.data.get('id')
+        if not pk:
+            return Response({"error": "Project ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            project = Project.objects.filter(project_uuid=pk)
+            project.delete()
+            return Response({"message": "Project deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+        except Project.DoesNotExist:
+            return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
+    # if request.method == "PUT":
+    #     serializer = ProjectSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     else:
+    #         return Response(serializer.errors)
+        
+        
