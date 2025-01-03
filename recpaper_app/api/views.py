@@ -1,11 +1,37 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, APIView
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
-from recpaper_app.models import User,Project, Keyword
-from recpaper_app.api.serializers import UserSerializer,ProjectSerializer,KeywordSerializer
+from recpaper_app.models import User,Project, Keyword, UserLogin
+from recpaper_app.api.serializers import UserSerializer,ProjectSerializer,KeywordSerializer, UserLoginSerializer
 from rest_framework import status, authentication, permissions
 from rest_framework import generics
 
+@api_view(["GET","POST","PUT","PATCH", "DELETE"])    
+def user_login(request,pk):
+    if request.method == "GET":
+        data= request.data
+        if(data["email"] and data["password"]):
+            if (UserLogin.objects.filter(email=data["email"])):
+                return Response(status=200)
+            else:
+                return Response(status=400)
+        else:
+            return Response(status==400)
+        
+            
+            
+        # papers = User.objects.filter(email=pk)
+        # serializer = UserSerializer(papers,many=True)
+        # return Response(serializer.data)
+    elif request.method == "POST":
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+        
+        
 @api_view(["GET","POST","PUT","PATCH", "DELETE"])    
 def user_view(request):
     if request.method == "GET":

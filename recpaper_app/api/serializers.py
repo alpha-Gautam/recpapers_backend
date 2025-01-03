@@ -1,11 +1,16 @@
 from rest_framework import serializers
-from recpaper_app.models import User, Project, Keyword
+from recpaper_app.models import User, Project, Keyword, UserLogin
 
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
+        fields  = "__all__"
+
+class UserLoginSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserLogin
         fields  = "__all__"
 
 
