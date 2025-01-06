@@ -1,7 +1,9 @@
 from django.db import models
-class UserLogin(models.Model):
-    email=models.EmailField(max_length=50,unique=True)
-    password= models.CharField(max_length=50)
+
+
+# class UserLogin(models.Model):
+#     email=models.EmailField(max_length=50,unique=True)
+#     password= models.CharField(max_length=50)
     
      
 
@@ -11,11 +13,11 @@ class User(models.Model):
     username = models.CharField(max_length=50)
     mobile=models.CharField(max_length=20)
     email=models.EmailField(max_length=50,unique=True)
-    # password=models.CharField(max_length=50)
+    password=models.CharField(max_length=100)
     college=models.CharField(max_length=50)
     department=models.CharField(max_length=50)
     is_student = models.BooleanField(default=True)
-    is_feculty = models.BooleanField(default=False)
+    is_faculty = models.BooleanField(default=False)
     active = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     
@@ -23,7 +25,7 @@ class User(models.Model):
         return self.username
 
 class Project(models.Model):
-    project_uuid = models.CharField(max_length=100)    
+    project_uuid = models.CharField(max_length=100,unique=True)    
     # user=models.ForeignKey(User,on_delete=models.CASCADE)
     # mentor=models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     user_uuid = models.CharField(max_length=100) 
@@ -65,26 +67,25 @@ class Keyword(models.Model):
     
     
 class Project_log(models.Model):
-  
     # project_uuid = models.ForeignKey('project', on_delete=models.CASCADE)
+    user_uuid = models.CharField(max_length=100)
     project_uuid = models.CharField(max_length=100)
     remark_by_mentor = models.TextField()
-    current_status = models.TextField()
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
-    verified = models.BooleanField()
+    current_status = models.TextField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    verified = models.BooleanField(default=False)
     
     def __str__(self) -> str:
         return self.name
     
     
 class Comment(models.Model):
- 
     user_uuid = models.CharField(max_length=100)
     project_uuid = models.CharField(max_length=100)
     message = models.TextField()
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self) -> str:
         return self.name
