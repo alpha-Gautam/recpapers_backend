@@ -1,17 +1,18 @@
 from rest_framework import serializers
-from recpaper_app.models import User, Project, Keyword, UserLogin
+from recpaper_app.models import User, Project, Keyword, Project_log, Comment
 
 
+class UserLoginSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        # fields  = ["user_uuid","email","password","is_student","is_faculty"]
+        exclude=["password"]
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields  = "__all__"
 
-class UserLoginSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserLogin
-        fields  = "__all__"
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -25,6 +26,17 @@ class KeywordSerializer(serializers.ModelSerializer):
     class Meta:
         model = Keyword
         # fields = ['id', 'title', 'code', 'linenos', 'language', 'style']
+        fields = "__all__"
+
+class ProjectLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project_log
+        fields = "__all__"
+        
+        
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
         fields = "__all__"
 
 
