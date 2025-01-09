@@ -9,10 +9,12 @@ from rest_framework import generics
 
 # ["GET","POST","PUT","PATCH", "DELETE"]
 
-@api_view(["GET","POST"])
+
+@api_view(["POST"])
 def user_login(request):
-    if request.method == "GET":
+    if request.method == "POST":
         data = request.data
+        print("api data ->",data)
         # Check if email and password are provided
         if "email" in data and "password" in data:
             userData = User.objects.filter(email=data["email"]).first()  # Use first() to get a single user
@@ -21,9 +23,9 @@ def user_login(request):
                     serializer=UserLoginSerializer(userData)
                     return Response(data=serializer.data, status=200)
                 else:
-                    return Response({"message": "Password is incorrect!"}, status=400)
+                    return Response({"message": "Password is incorrect!"}, status=401)
             else:
-                return Response({"message": "User not found!"}, status=404)
+                return Response({"message": "User not found! Enter rignt email"}, status=404)
         else:
             return Response({"message": "Email and password are required!"}, status=400)
             
@@ -36,12 +38,16 @@ def user_login(request):
 @api_view(["POST"])
 def user_ragister(request):
     if request.method == "POST":
-        serializer = UserSerializer(data=request.data)
+        data=request.data
+        serializer = UserSerializer(data=data)
+        print("data for user ragristration--->",data)
+        print("afer serialize data for user ragristration--->",serializer)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
+        
         
 @api_view(["GET","POST","PUT","PATCH", "DELETE"])    
 def user_view(request):
@@ -159,6 +165,7 @@ def porject_log(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
         
 @api_view(["GET","POST"])
 def Project_comments(request):
