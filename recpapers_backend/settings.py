@@ -30,8 +30,8 @@ SECRET_KEY = 'django-insecure-+fyft9_*r@8v#@72xm0zcb69r9fofml)8+$i1np*70j@728o#q
 
 DEBUG = os.environ.get("DEBUG","False").lower()=="true"
 
-# ALLOWED_HOSTS = []
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS","").split(" ")
+# ALLOWED_HOSTS = ["localhost"]
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS","localhost").split(" ")
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
