@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import dj_database_url
+import os
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +23,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+
 SECRET_KEY = 'django-insecure-+fyft9_*r@8v#@72xm0zcb69r9fofml)8+$i1np*70j@728o#q'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
+DEBUG = os.environ.get("DEBUG","False").lower()=="true"
+
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS","").split(" ")
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
@@ -119,7 +125,8 @@ DATABASES = {
     }
 }
 
-
+DATABASES['default'] = dj_database_url.parse("postgresql://rec_papers_user:0zgerDOfXruSZdijHLS4hKWGi2hyWmyg@dpg-cu1p0gbtq21c73bjvn5g-a.singapore-postgres.render.com/rec_papers")
+# render postgrey url = "postgresql://rec_papers_user:0zgerDOfXruSZdijHLS4hKWGi2hyWmyg@dpg-cu1p0gbtq21c73bjvn5g-a.singapore-postgres.render.com/rec_papers"
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
