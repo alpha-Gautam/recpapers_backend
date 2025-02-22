@@ -125,8 +125,8 @@ DATABASES = {
     }
 }
 
-DATABASES['default'] = dj_database_url.parse("postgresql://rec_papers_user:0zgerDOfXruSZdijHLS4hKWGi2hyWmyg@dpg-cu1p0gbtq21c73bjvn5g-a.singapore-postgres.render.com/rec_papers")
-# render postgrey url = "postgresql://rec_papers_user:0zgerDOfXruSZdijHLS4hKWGi2hyWmyg@dpg-cu1p0gbtq21c73bjvn5g-a.singapore-postgres.render.com/rec_papers"
+DATABASES['default'] = dj_database_url.parse("postgres://neondb_owner:npg_LRem3Hyh8gOu@ep-sweet-lab-a1l265vt-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require")
+# render postgrey url = "postgres://neondb_owner:npg_LRem3Hyh8gOu@ep-sweet-lab-a1l265vt-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
