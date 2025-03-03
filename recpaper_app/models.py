@@ -31,6 +31,7 @@ class Project(models.Model):
     user_uuid = models.CharField(max_length=100) 
     mentor_uuid = models.CharField(max_length=100) 
     title=models.CharField(max_length=500, unique=True)
+    keyword =models.CharField(max_length=500)
     objective=models.CharField(max_length=1000)
     description=models.CharField(max_length=1000)
     status = models.CharField(max_length=500)

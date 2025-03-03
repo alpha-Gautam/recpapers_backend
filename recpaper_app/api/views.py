@@ -87,7 +87,9 @@ def project_view(request):
         serializer = ProjectSerializer(papers,many=True)
         return Response(serializer.data)
     elif request.method == "POST":
-        serializer = ProjectSerializer(data=request.data)
+        data=request.data
+        print("project data :- ", data)
+        serializer = ProjectSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
