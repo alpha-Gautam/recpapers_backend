@@ -120,7 +120,7 @@ def project_view(request):
 @api_view(["GET","POST","PUT","PATCH", "DELETE"])
 def project_detail(request, pk):
     if request.method == "GET":
-        papers = Project.objects.filter(project_uuid=pk)
+        papers = Project.objects.filter(id=pk)
         if not papers.exists():
             return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
         serializer = ProjectSerializer(papers.first())
