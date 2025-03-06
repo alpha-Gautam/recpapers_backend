@@ -150,16 +150,17 @@ def project_detail(request, pk):
         
         
 @api_view(["GET","POST"])
-def porject_log(request):
-    if request.methode=="GET":
-        data=request.data
-        if "project_uuid" in data:
+def porject_log(request,pk):
+    if request.method=="GET":
+        # data=request.data
+        # if "project_uuid" in data:
             try:
-                log = Project_log.objects.filter(project_uuid=data["project_uuid"])
-                return Response(log, status=status.HTTP_202_ACCEPTED)
+                log = Project_log.objects.filter(project_uuid=pk)
+                serializer=ProjectLogSerializer(log,many=True)
+                return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
             except Project_log.DoesNotExist:
                 return Response({"error": "Project log not found"}, status=status.HTTP_404_NOT_FOUND)
-    if request.methode=="POST":
+    if request.method=="POST":
         data=request.data
         serializer = ProjectLogSerializer(data)
         if serializer.is_valid():
