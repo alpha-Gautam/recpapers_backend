@@ -15,7 +15,7 @@ urlpatterns = [
     path('key/', keyword_view, name='paper_list'),
     
     
-    path('log/', porject_log, name='Project_Log'),
+    path('log/<str:pk>/', porject_log, name='Project_Log'),
     path('commnets/', Project_comments, name='Project_comments'),
     
     

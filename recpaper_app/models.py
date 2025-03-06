@@ -78,7 +78,7 @@ class Project_log(models.Model):
     verified = models.BooleanField(default=False)
     
     def __str__(self) -> str:
-        return self.name
+        return self.project_uuid
     
     
 class Comment(models.Model):
