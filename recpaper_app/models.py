@@ -1,94 +1,89 @@
 from django.db import models
+import uuid
 
 
-# class UserLogin(models.Model):
-#     email=models.EmailField(max_length=50,unique=True)
-#     password= models.CharField(max_length=50)
+class BaseModel(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, primary_key=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
-     
+    class Meta:
+        abstract = True
 
 
-class User(models.Model):
-    user_uuid =models.CharField(max_length=100,unique=True)   
+
+
+
+
+class User(BaseModel):
     username = models.CharField(max_length=50)
     mobile=models.CharField(max_length=20)
     email=models.EmailField(max_length=50,unique=True)
-    password=models.CharField(max_length=100)
-    college=models.CharField(max_length=50)
-    department=models.CharField(max_length=50)
+    password=models.CharField(max_length=50)
+    college=models.CharField(max_length=100)
+    department=models.CharField(max_length=100)
     is_student = models.BooleanField(default=True)
     is_faculty = models.BooleanField(default=False)
     active = models.BooleanField(default=True)
-    created = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return self.username
+    
+    
 
-class Project(models.Model):
-    project_uuid = models.CharField(max_length=100,unique=True)    
-    # user=models.ForeignKey(User,on_delete=models.CASCADE)
-    # mentor=models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    user_uuid = models.CharField(max_length=100) 
-    mentor_uuid = models.CharField(max_length=100) 
+class Platform(BaseModel):
+    platform_name = models.CharField(max_length=100)
+    
+    def __str__(self) -> str:
+        return self.platform_name
+    
+
+    
+# class Keyword(BaseModel):
+    
+#     name = models.TextField()
+    
+#     def __str__(self) -> str:
+#         return self.name
+   
+
+class Project(BaseModel):
+    user=models.ForeignKey(User,on_delete=models.CASCADE,related_name="project_author")
+    mentor=models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="project_mentor")
     title=models.CharField(max_length=500, unique=True)
-    keyword =models.CharField(max_length=500)
-    objective=models.CharField(max_length=1000)
-    description=models.CharField(max_length=1000)
+    objective=models.TextField()
+    description=models.TextField()
     status = models.CharField(max_length=500)
+    keyword =models.TextField()
+    platform =models.ManyToManyField(Platform)
     github_link = models.CharField(max_length=500)
-    verified = models.BooleanField(default=False) 
-    created_at =  models.DateTimeField(auto_now_add=True)
-    last_updated_at =  models.DateTimeField(auto_now=True)
+    verified = models.BooleanField(default=False)
     
-    # def __str__(self):
-    #     return self.title
-    
+  
     def __str__(self):
-        return f"{self.title} (Project ID: {self.id})"
+        return self.title
 
 
-
-class Platform(models.Model):
-    project_uuid = models.CharField(max_length=100)
-    platform_name = models.TextField()
+ 
     
-    def __str__(self) -> str:
-        return self.name
-    
-
-    
-class Keyword(models.Model):
-    
-    # project_id = models.ForeignKey('project', on_delete=models.CASCADE)
-    project_uuid = models.CharField(max_length=100)
-    name = models.TextField()
-    
-    def __str__(self) -> str:
-        return self.name
-    
-    
-class Project_log(models.Model):
-    # project_uuid = models.ForeignKey('project', on_delete=models.CASCADE)
-    user_uuid = models.CharField(max_length=100)
-    project_uuid = models.CharField(max_length=100)
+class Project_log(BaseModel):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    mentor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     remark_by_mentor = models.TextField()
     current_status = models.TextField(null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
     verified = models.BooleanField(default=False)
     
     def __str__(self) -> str:
-        return self.project_uuid
+        return self.remark_by_mentor
     
     
-class Comment(models.Model):
-    user_uuid = models.CharField(max_length=100)
-    project_uuid = models.CharField(max_length=100)
+class Comment(BaseModel):
+    user = models.ForeignKey(User, models.CASCADE, related_name="comment_writer")
+    project_uuid = models.ForeignKey(Project, models.CASCADE)
     message = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    
     
     def __str__(self) -> str:
-        return self.name
+        return self.message
     
     

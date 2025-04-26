@@ -1,8 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, APIView
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
-from recpaper_app.models import User, Project, Keyword, Project_log, Comment
-from recpaper_app.api.serializers import UserSerializer,ProjectSerializer,KeywordSerializer, UserLoginSerializer, UserLoginSerializer, ProjectLogSerializer,CommentSerializer
+from recpaper_app.models import User, Project, Project_log, Comment
+from recpaper_app.api.serializers import UserSerializer,ProjectSerializer, UserLoginSerializer, UserLoginSerializer, ProjectLogSerializer,CommentSerializer
 from rest_framework import status, authentication, permissions
 from rest_framework import generics
 
@@ -69,22 +69,22 @@ class user_view(APIView):
             return Response(serializer.errors)
         
         
-class keyword_view(APIView):
+# class keyword_view(APIView):
     
-    def get(self, request):
-    # if request.method == "GET":
-        papers = Keyword.objects.all()
-        serializer = KeywordSerializer(papers,many=True)
-        return Response(serializer.data)
+#     def get(self, request):
+#     # if request.method == "GET":
+#         papers = Keyword.objects.all()
+#         serializer = KeywordSerializer(papers,many=True)
+#         return Response(serializer.data)
     
-    def post(self, request):
-    # elif request.method == "POST":
-        serializer = KeywordSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
+#     def post(self, request):
+#     # elif request.method == "POST":
+#         serializer = KeywordSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         else:
+#             return Response(serializer.errors)
     
     
     
