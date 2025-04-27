@@ -3,7 +3,7 @@ import uuid
 
 
 class BaseModel(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, primary_key=True)
+    uuid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -62,10 +62,15 @@ class Project(BaseModel):
   
     def __str__(self):
         return self.title
-
-
- 
     
+    
+    class Meta:
+        ordering=['title']
+
+
+
+
+
 class Project_log(BaseModel):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     mentor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
