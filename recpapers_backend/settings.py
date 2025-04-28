@@ -122,10 +122,10 @@ WSGI_APPLICATION = 'recpapers_backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
 }
 
 DATABASES['default'] = dj_database_url.parse("postgres://neondb_owner:npg_LRem3Hyh8gOu@ep-sweet-lab-a1l265vt-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require")

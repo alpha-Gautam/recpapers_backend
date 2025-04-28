@@ -12,7 +12,20 @@ class BaseModel(models.Model):
 
 
 
-
+class Mentor(BaseModel):
+    username = models.CharField(max_length=50)
+    mobile=models.CharField(max_length=20)
+    email=models.EmailField(max_length=50,unique=True)
+    password=models.CharField(max_length=50)
+    college=models.CharField(max_length=100)
+    department=models.CharField(max_length=100)
+    is_faculty = models.BooleanField(default=True)
+    verified = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return self.username
+    
 
 
 class User(BaseModel):
@@ -49,10 +62,10 @@ class Platform(BaseModel):
 
 class Project(BaseModel):
     user=models.ForeignKey(User,on_delete=models.CASCADE,related_name="project_author")
-    mentor=models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="project_mentor")
+    mentor=models.ForeignKey(Mentor, on_delete=models.SET_NULL, null=True, related_name="project_mentor")
     title=models.CharField(max_length=500, unique=True)
-    objective=models.TextField()
     description=models.TextField()
+    objective=models.TextField()
     status = models.CharField(max_length=500)
     keyword =models.TextField()
     platform =models.ManyToManyField(Platform)
@@ -73,7 +86,7 @@ class Project(BaseModel):
 
 class Project_log(BaseModel):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    mentor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    mentor = models.ForeignKey(Mentor, on_delete=models.SET_NULL, null=True)
     remark_by_mentor = models.TextField()
     current_status = models.TextField(null=True)
     verified = models.BooleanField(default=False)

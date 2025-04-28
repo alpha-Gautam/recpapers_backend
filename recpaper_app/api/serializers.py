@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from recpaper_app.models import User, Project, Project_log, Comment
+from recpaper_app.models import User, Project, Project_log, Comment,Platform,Mentor
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
@@ -7,15 +7,49 @@ class UserLoginSerializer(serializers.ModelSerializer):
         model = User
         # fields  = ["user_uuid","email","password","is_student","is_faculty"]
         exclude=["password"]
+        
+        
+class MentorLoginSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        # fields  = ["user_uuid","email","password","is_student","is_faculty"]
+        exclude=["password"]
 
+class MentorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Mentor
+        fields  = "__all__"
+        
+        
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields  = "__all__"
 
 
+class PlatformSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Platform
+        fields  = ["platform_name"]
+
+
 
 class ProjectSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+    mentor = serializers.SerializerMethodField()    
+    platform = PlatformSerializer(many=True)
+
+    def get_user(self,obj):
+        
+        return obj.user.username
+    
+    def get_mentor(self,obj):
+        
+        return obj.mentor.username
+    
+    
+    
+        
     class Meta:
         model = Project
         # fields = ['id', 'title', 'code', 'linenos', 'language', 'style']
@@ -29,6 +63,8 @@ class ProjectSerializer(serializers.ModelSerializer):
 #         fields = "__all__"
 
 class ProjectLogSerializer(serializers.ModelSerializer):
+    
+    
     class Meta:
         model = Project_log
         fields = "__all__"
