@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, APIView
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 from recpaper_app.models import User, Mentor, Project, Project_log, Comment
-from recpaper_app.api.serializers import UserSerializer,MentorLoginSerializer, ProjectSerializer, UserLoginSerializer, UserLoginSerializer, ProjectLogSerializer,CommentSerializer
+from recpaper_app.api.serializers import UserSerializer, MentorSerializer, MentorLoginSerializer, ProjectSerializer, UserLoginSerializer, ProjectLogSerializer,CommentSerializer
 from rest_framework import status, authentication, permissions
 from rest_framework import generics
 
@@ -65,15 +65,38 @@ class user_ragister(APIView):
     def post(self, request):
     # if request.method == "POST":
         data=request.data
-        serializer = UserSerializer(data=data)
-        print("data for user ragristration--->",data)
-        print("afer serialize data for user ragristration--->",serializer)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
-        
+        try:
+            if(data["is_student"]==True and data["is_faculty"]==False):
+
+                serializer = UserSerializer(data=data)
+                print("data for user ragristration--->",data)
+                print("afer serialize data for user ragristration--->",serializer)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data)
+                else:
+                    return Response(serializer.errors,status=400)
+                
+            elif(data["is_student"]==False and data["is_faculty"]==True):
+
+                serializer = MentorSerializer(data=data)
+                print("data for user ragristration--->",data)
+                print("afer serialize data for user ragristration--->",serializer)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data)
+                else:
+                    return Response(serializer.errors,status=400)
+                
+                
+        except Exception as e:
+            print("Error during ragister:- ",e)
+            return Response({
+                
+                "message":"something went wrong",
+                
+            },status=400)
+            
         
 class user_view(APIView):
     

@@ -15,6 +15,7 @@ class BaseModel(models.Model):
 class Mentor(BaseModel):
     username = models.CharField(max_length=50)
     mobile=models.CharField(max_length=20)
+    roll_no=models.CharField(max_length=50, unique=True)
     email=models.EmailField(max_length=50,unique=True)
     password=models.CharField(max_length=50)
     college=models.CharField(max_length=100)
@@ -31,6 +32,7 @@ class Mentor(BaseModel):
 class User(BaseModel):
     username = models.CharField(max_length=50)
     mobile=models.CharField(max_length=20)
+    roll_no=models.CharField(max_length=50, unique=True)
     email=models.EmailField(max_length=50,unique=True)
     password=models.CharField(max_length=50)
     college=models.CharField(max_length=100)
