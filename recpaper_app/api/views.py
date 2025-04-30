@@ -208,12 +208,12 @@ class porject_log(APIView):
     
     def get(self, request, pk):
  
-            try:
-                log = Project_log.objects.filter(project=pk)
-                serializer=ProjectLogSerializer(log,many=True)
-                return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-            except Project_log.DoesNotExist:
-                return Response({"error": "Project log not found"}, status=status.HTTP_404_NOT_FOUND)
+        try:
+            log = Project_log.objects.filter(project=pk)
+            serializer=ProjectLogSerializer(log,many=True)
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        except Project_log.DoesNotExist:
+            return Response({"error": "Project log not found"}, status=status.HTTP_404_NOT_FOUND)
             
     def post(self, request, pk):        
         data=request.data
