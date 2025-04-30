@@ -1,8 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, APIView
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
-from recpaper_app.models import User, Mentor, Project, Project_log, Comment
-from recpaper_app.api.serializers import UserSerializer, MentorSerializer, MentorLoginSerializer, ProjectSerializer, UserLoginSerializer, ProjectLogSerializer,CommentSerializer
+from recpaper_app.models import User, Mentor, Project, Project_log, Comment, Platform
+from recpaper_app.api.serializers import UserSerializer, MentorSerializer, MentorLoginSerializer, ProjectSerializer, UserLoginSerializer, ProjectLogSerializer,CommentSerializer, PlatformSerializer
 from rest_framework import status, authentication, permissions
 from rest_framework import generics
 
@@ -101,37 +101,22 @@ class user_ragister(APIView):
 class user_view(APIView):
     
     def get(self, request):
-    # if request.method == "GET":
-        papers = User.objects.all()
-        serializer = UserSerializer(papers,many=True)
+        user_data = User.objects.all()
+        serializer = UserSerializer(user_data,many=True)
         return Response(serializer.data)
     
-    # def post(self, request):
-    # # elif request.method == "POST":
-    #     serializer = UserSerializer(data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data)
-    #     else:
-    #         return Response(serializer.errors)
+class mentor_view(APIView):
+    def get(self, request):
+        mentor=Mentor.objects.all()
+        serializer = MentorSerializer(mentor ,many=True)
+        return Response(serializer.data)
         
         
-# class keyword_view(APIView):
-    
-#     def get(self, request):
-#     # if request.method == "GET":
-#         papers = Keyword.objects.all()
-#         serializer = KeywordSerializer(papers,many=True)
-#         return Response(serializer.data)
-    
-#     def post(self, request):
-#     # elif request.method == "POST":
-#         serializer = KeywordSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         else:
-#             return Response(serializer.errors)
+class platform_view(APIView):
+    def get(self, request):
+        platform = Platform.objects.all()
+        serializer = PlatformSerializer(platform, many=True)
+        return Response(serializer.data,status=200)
     
     
     
@@ -222,9 +207,7 @@ class project_detail(APIView):
 class porject_log(APIView):
     
     def get(self, request, pk):
-    # if request.method=="GET":
-        # data=request.data
-        # if "project_uuid" in data:
+ 
             try:
                 log = Project_log.objects.filter(project=pk)
                 serializer=ProjectLogSerializer(log,many=True)
@@ -233,7 +216,6 @@ class porject_log(APIView):
                 return Response({"error": "Project log not found"}, status=status.HTTP_404_NOT_FOUND)
             
     def post(self, request, pk):        
-    # if request.method=="POST":
         data=request.data
         serializer = ProjectLogSerializer(data)
         if serializer.is_valid():

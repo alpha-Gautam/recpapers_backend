@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from recpaper_app.models import User, Project, Project_log, Comment,Platform,Mentor
+from recpaper_app.models import User, Mentor, Project, Project_log, Comment, Platform
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
@@ -8,6 +8,10 @@ class UserLoginSerializer(serializers.ModelSerializer):
         # fields  = ["user_uuid","email","password","is_student","is_faculty"]
         exclude=["password"]
         
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields  = "__all__"
         
 class MentorLoginSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,19 +22,15 @@ class MentorLoginSerializer(serializers.ModelSerializer):
 class MentorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mentor
-        fields  = "__all__"
+        fields  = ["uuid","username"]
         
         
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields  = "__all__"
 
 
 class PlatformSerializer(serializers.ModelSerializer):
     class Meta:
         model = Platform
-        fields  = ["platform_name"]
+        fields  = ["uuid","platform_name"]
 
 
 
