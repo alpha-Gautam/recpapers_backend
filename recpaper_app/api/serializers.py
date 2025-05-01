@@ -22,6 +22,11 @@ class MentorSerializer(serializers.ModelSerializer):
         model = Mentor
         fields  = ["uuid","username"]
         
+class MentorCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Mentor
+        fields  = "__all__"
+        
         
 
 
