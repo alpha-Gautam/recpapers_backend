@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, APIView
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 from recpaper_app.models import User, Mentor, Project, Project_log, Comment
-from recpaper_app.api.serializers import UserSerializer, MentorSerializer, MentorLoginSerializer, ProjectSerializer, UserLoginSerializer, ProjectLogSerializer,CommentSerializer,ProjectCreateSerializer
+from recpaper_app.api.serializers import UserSerializer, MentorSerializer, MentorLoginSerializer, ProjectSerializer, UserLoginSerializer, ProjectLogSerializer,CommentSerializer,ProjectCreateSerializer, MentorCreateSerializer
 from rest_framework import status, authentication, permissions
 from rest_framework import generics
 
@@ -81,7 +81,7 @@ class user_ragister(APIView):
                 
             elif(data["is_student"]==False and data["is_faculty"]==True):
 
-                serializer = MentorSerializer(data=data)
+                serializer = MentorCreateSerializer(data=data)
                 print("data for user ragristration--->",data)
                 print("afer serialize data for user ragristration--->",serializer)
                 if serializer.is_valid():
