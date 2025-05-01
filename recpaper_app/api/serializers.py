@@ -1,11 +1,10 @@
 from rest_framework import serializers
-from recpaper_app.models import User, Mentor, Project, Project_log, Comment, Platform
+from recpaper_app.models import User, Mentor, Project, Project_log, Comment
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        # fields  = ["user_uuid","email","password","is_student","is_faculty"]
         exclude=["password"]
         
 class UserSerializer(serializers.ModelSerializer):
@@ -16,7 +15,6 @@ class UserSerializer(serializers.ModelSerializer):
 class MentorLoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        # fields  = ["user_uuid","email","password","is_student","is_faculty"]
         exclude=["password"]
 
 class MentorSerializer(serializers.ModelSerializer):
@@ -27,44 +25,22 @@ class MentorSerializer(serializers.ModelSerializer):
         
 
 
-class PlatformSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Platform
-        fields  = ["uuid","platform_name"]
-
-
-
 class ProjectSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     mentor = serializers.SerializerMethodField()    
-    platform = PlatformSerializer(many=True)
-
     def get_user(self,obj):
-        
         return obj.user.username
     
     def get_mentor(self,obj):
-        
         return obj.mentor.username
     
-    
-    
-        
     class Meta:
         model = Project
-        # fields = ['id', 'title', 'code', 'linenos', 'language', 'style']
         fields = "__all__"
         
         
-# class KeywordSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Keyword
-#         # fields = ['id', 'title', 'code', 'linenos', 'language', 'style']
-#         fields = "__all__"
 
 class ProjectLogSerializer(serializers.ModelSerializer):
-    
-    
     class Meta:
         model = Project_log
         fields = "__all__"
@@ -75,6 +51,11 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = "__all__"
 
+class ProjectCreateSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Project
+        fields="__all__"
 
 
 
@@ -114,14 +95,14 @@ class CommentSerializer(serializers.ModelSerializer):
 #         instance.save()
 #         return instance
 
-class projectSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
-    title = serializers.CharField()
-    objective = serializers.CharField()
-    platform = serializers.CharField()
-    description = serializers.CharField()
-    user=serializers.CharField()
-    mentor=serializers.CharField()
+# class projectSerializer(serializers.Serializer):
+#     id = serializers.IntegerField(read_only=True)
+#     title = serializers.CharField()
+#     objective = serializers.CharField()
+#     platform = serializers.CharField()
+#     description = serializers.CharField()
+#     user=serializers.CharField()
+#     mentor=serializers.CharField()
     
     # title=models.CharField(max_length=50)
     # objective=models.CharField(max_length=500)
@@ -132,8 +113,8 @@ class projectSerializer(serializers.Serializer):
     
     
 
-    def create(self, validated_data):
-        return Paper.objects.create(**validated_data)
+    # def create(self, validated_data):
+    #     return Paper.objects.create(**validated_data)
     
     # def update(self, instance, validated_data):
     #     instance.title = validated_data.get('title',instance.title)

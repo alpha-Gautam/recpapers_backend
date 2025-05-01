@@ -1,8 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, APIView
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
-from recpaper_app.models import User, Mentor, Project, Project_log, Comment, Platform
-from recpaper_app.api.serializers import UserSerializer, MentorSerializer, MentorLoginSerializer, ProjectSerializer, UserLoginSerializer, ProjectLogSerializer,CommentSerializer, PlatformSerializer
+from recpaper_app.models import User, Mentor, Project, Project_log, Comment
+from recpaper_app.api.serializers import UserSerializer, MentorSerializer, MentorLoginSerializer, ProjectSerializer, UserLoginSerializer, ProjectLogSerializer,CommentSerializer,ProjectCreateSerializer
 from rest_framework import status, authentication, permissions
 from rest_framework import generics
 
@@ -112,11 +112,11 @@ class mentor_view(APIView):
         return Response(serializer.data)
         
         
-class platform_view(APIView):
-    def get(self, request):
-        platform = Platform.objects.all()
-        serializer = PlatformSerializer(platform, many=True)
-        return Response(serializer.data,status=200)
+# class platform_view(APIView):
+#     def get(self, request):
+#         platform = Platform.objects.all()
+#         serializer = PlatformSerializer(platform, many=True)
+#         return Response(serializer.data,status=200)
     
     
     
@@ -131,14 +131,16 @@ class project_view(APIView):
     
     def post(self, request):
     # elif request.method == "POST":
-        data=request.data
-        print("project data :- ", data)
-        serializer = ProjectSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
+        try:
+            data = request.data
+            serializer = ProjectSerializer(data=data)  # Fixed: using data keyword
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=200)
+            else:
+                return Response({"message":"fill the valid data"}, status=400)  
+        except Exception as e:
+            return Response({"message": str(e)}, status=400)  # Fixed: converting exception to string
         
         
         
@@ -202,6 +204,19 @@ class project_detail(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
+class project_create(APIView):
+    def post(self, request):
+        
+        try:
+            data = request.data
+            serializer = ProjectCreateSerializer(data=data)
+            if(serializer.is_valid()):
+                serializer.save()
+                return Response(serializer.data, status=200)
+            else:
+                return Response({"message":str(serializer.error_messages)}, status=400)  
+        except Exception as e:
+            return Response({"message":str(e)},status=400)
         
 # @api_view(["GET","POST"])
 class porject_log(APIView):
