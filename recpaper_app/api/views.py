@@ -65,11 +65,13 @@ class user_ragister(APIView):
     def post(self, request):
     # if request.method == "POST":
         data=request.data
+        
+        
         try:
             if(data["is_student"]==True and data["is_faculty"]==False):
 
                 serializer = UserSerializer(data=data)
-                print("data for user ragristration--->",data)
+                # print("data for user ragristration--->",data)
                 print("afer serialize data for user ragristration--->",serializer)
                 if serializer.is_valid():
                     serializer.save()
@@ -230,9 +232,9 @@ class porject_log(APIView):
         except Project_log.DoesNotExist:
             return Response({"error": "Project log not found"}, status=status.HTTP_404_NOT_FOUND)
             
-    def post(self, request, pk):        
+    def post(self, request):        
         data=request.data
-        serializer = ProjectLogSerializer(data)
+        serializer = ProjectLogSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
