@@ -20,6 +20,7 @@ urlpatterns = [
     
     
     path('log/<str:pk>/', porject_log.as_view(), name='Project_Log'),
+    path('log/', porject_log.as_view(), name='Project_Log'),
     path('commnets/', Project_comments.as_view(), name='Project_comments'),
     
     
