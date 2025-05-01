@@ -46,11 +46,11 @@ class User(BaseModel):
     
     
 
-class Platform(BaseModel):
-    platform_name = models.CharField(max_length=100)
+# class Platform(BaseModel):
+#     platform_name = models.CharField(max_length=100)
     
-    def __str__(self) -> str:
-        return self.platform_name
+#     def __str__(self) -> str:
+#         return self.platform_name
     
 
     
@@ -70,7 +70,7 @@ class Project(BaseModel):
     objective=models.TextField()
     status = models.CharField(max_length=500)
     keyword =models.TextField()
-    platform =models.ManyToManyField(Platform)
+    platform =models.TextField()
     github_link = models.CharField(max_length=500)
     verified = models.BooleanField(default=False)
     
