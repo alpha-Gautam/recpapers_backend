@@ -73,6 +73,7 @@ class Project(BaseModel):
     platform =models.TextField()
     github_link = models.CharField(max_length=500)
     verified = models.BooleanField(default=False)
+    public = models.BooleanField(default=False)
     
   
     def __str__(self):

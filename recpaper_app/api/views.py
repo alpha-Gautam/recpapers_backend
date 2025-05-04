@@ -1,11 +1,9 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, APIView
-from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 from recpaper_app.models import User, Mentor, Project, Project_log, Comment
 from recpaper_app.api.serializers import UserSerializer, MentorSerializer, MentorLoginSerializer, ProjectSerializer, UserLoginSerializer, ProjectLogSerializer,CommentSerializer,ProjectCreateSerializer, MentorCreateSerializer
 from rest_framework import status, authentication, permissions
-from rest_framework import generics
-
+from  django.db.models import Q
 
 # ["GET","POST","PUT","PATCH", "DELETE"]
 
@@ -63,10 +61,7 @@ class user_login(APIView):
 
 class user_ragister(APIView):
     def post(self, request):
-    # if request.method == "POST":
         data=request.data
-        
-        
         try:
             if(data["is_student"]==True and data["is_faculty"]==False):
 
@@ -93,11 +88,7 @@ class user_ragister(APIView):
                 
         except Exception as e:
             print("Error during ragister:- ",e)
-            return Response({
-                
-                "message":"something went wrong",
-                
-            },status=400)
+            return Response({"message":"something went wrong"},status=400)
             
         
 class user_view(APIView):
@@ -112,27 +103,31 @@ class mentor_view(APIView):
         mentor=Mentor.objects.all()
         serializer = MentorSerializer(mentor ,many=True)
         return Response(serializer.data)
-        
-        
-# class platform_view(APIView):
-#     def get(self, request):
-#         platform = Platform.objects.all()
-#         serializer = PlatformSerializer(platform, many=True)
-#         return Response(serializer.data,status=200)
-    
-    
+         
     
 class project_view(APIView):
     
     def get(self, request):
-    # if request.method == "GET":
-        papers = Project.objects.all()
-        serializer = ProjectSerializer(papers,many=True)
-        return Response(serializer.data)
-    
+        try:
+            queryset = Project.objects.all()
+
+            if(request.GET.get("search")):
+                search = request.GET.get("search")
+                queryset=queryset.filter(
+                    Q(title__icontains=search)|
+                    Q(user__username__icontains=search)|
+                    Q(mentor__username__icontains=search)|
+                    Q(platform__icontains=search)|
+                    Q(keyword__icontains=search)
+                )
+
+
+            serializer = ProjectSerializer(queryset,many=True)
+            return Response(serializer.data)
+        except Exception as e:
+            return Response(data=e,status=400)
     
     def post(self, request):
-    # elif request.method == "POST":
         try:
             data = request.data
             serializer = ProjectSerializer(data=data)  # Fixed: using data keyword
