@@ -32,17 +32,21 @@ class MentorCreateSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
-    mentor = serializers.SerializerMethodField()    
+    mentor = serializers.SerializerMethodField()
+    p_user = serializers.SerializerMethodField()
+    
     def get_user(self,obj):
         return obj.user.username
     
     def get_mentor(self,obj):
         return obj.mentor.username
     
+    def get_p_user(self,obj):
+        return [obj.user.uuid,obj.mentor.uuid]
+    
     class Meta:
         model = Project
         fields = "__all__"
-        
         
 
 class ProjectLogSerializer(serializers.ModelSerializer):
