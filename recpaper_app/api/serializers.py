@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from recpaper_app.models import User, Mentor, Project, Project_log, Comment
+from recpaper_app.models import User, Mentor, Project, Project_log, Comment, Files
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
@@ -69,7 +69,17 @@ class ProjectCreateSerializer(serializers.ModelSerializer):
 
 
 
-
+# class imageSerializer(serializers.ModelSerializer):
+    
+#     class MEta:
+#         models = images
+#         files="__all__"
+        
+class filesSerializer(serializers.ModelSerializer):
+    
+    class MEta:
+        models = Files
+        files="__all__"
 
 
 

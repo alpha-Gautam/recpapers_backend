@@ -1,7 +1,10 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, APIView
-from recpaper_app.models import User, Mentor, Project, Project_log, Comment
-from recpaper_app.api.serializers import UserSerializer, MentorSerializer, MentorLoginSerializer, ProjectSerializer, UserLoginSerializer, ProjectLogSerializer,CommentSerializer,ProjectCreateSerializer, MentorCreateSerializer
+from recpaper_app.models import User, Mentor, Project, Project_log, Comment, Files
+from recpaper_app.api.serializers import (UserSerializer, MentorSerializer, MentorLoginSerializer,
+                                          ProjectSerializer, UserLoginSerializer, ProjectLogSerializer, 
+                                          CommentSerializer,ProjectCreateSerializer, MentorCreateSerializer, 
+                                          filesSerializer)
 from rest_framework import status, authentication, permissions
 from  django.db.models import Q
 
@@ -215,7 +218,6 @@ class project_create(APIView):
         except Exception as e:
             return Response({"message":str(e)},status=400)
         
-# @api_view(["GET","POST"])
 class porject_log(APIView):
     
     def get(self, request, pk):
@@ -236,8 +238,7 @@ class porject_log(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-        
-# @api_view(["GET","POST"])
+   
 class Project_comments(APIView):
     
     def get(self, request):
@@ -259,4 +260,16 @@ class Project_comments(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    
+    
+class file_upload(APIView):
+    def get(self,request,pk):
+        queryset = Files.objects.get(project=pk)
+        serializer = filesSerializer(queryset)
+        return Response(serializer.data, status=200)
+            
+        
+    # def post(self,request):
+    #     data = request.data
         

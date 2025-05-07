@@ -44,22 +44,6 @@ class User(BaseModel):
     def __str__(self):
         return self.username
     
-    
-
-# class Platform(BaseModel):
-#     platform_name = models.CharField(max_length=100)
-    
-#     def __str__(self) -> str:
-#         return self.platform_name
-    
-
-    
-# class Keyword(BaseModel):
-    
-#     name = models.TextField()
-    
-#     def __str__(self) -> str:
-#         return self.name
    
 
 class Project(BaseModel):
@@ -108,3 +92,14 @@ class Comment(BaseModel):
         return self.message
     
     
+class Files(BaseModel):
+    project = models.ForeignKey(Project, models.CASCADE, related_name = "related_project")
+    file= models.FileField()
+    message = models.TextField()
+    
+    
+    
+# class Images(BaseModel):
+#     project = models.ForeignKey(Project, models.CASCADE, related_name="related_project")
+#     file= models.ImageField()
+#     message = models.TextField()

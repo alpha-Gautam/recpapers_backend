@@ -1,7 +1,13 @@
 from django.urls import path, include
 
 from recpaper_app.api.views import project_view, user_view, project_detail, user_login, user_ragister
-from recpaper_app.api.views import porject_log, Project_comments,mentor_view,project_create
+from recpaper_app.api.views import porject_log, Project_comments,mentor_view,project_create, file_upload
+
+
+# from django.conf import settings
+# from django.conf.urls.static import static
+ 
+
 
 urlpatterns = [
    
@@ -21,8 +27,13 @@ urlpatterns = [
     
     path('log/<str:pk>/', porject_log.as_view(), name='Project_Log'),
     path('log/', porject_log.as_view(), name='Project_Log'),
+    
     path('commnets/', Project_comments.as_view(), name='Project_comments'),
     
-    
+    path('files/<str:pk>', file_upload.as_view(), name="upload files")
     
 ]
+
+# if settings.DEBUG:
+#     urlpatterns+=static(settings.MEDIA_URL, documetn_root= settings.MEDIA_ROOT)
+    
