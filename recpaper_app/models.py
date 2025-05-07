@@ -96,7 +96,7 @@ class Comment(BaseModel):
 class Files(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    file = models.FileField(storage=VercelBlobStorage())
+    file = models.FileField(storage=VercelBlobStorage(), upload_to='project_files', max_length=500)
     message = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
