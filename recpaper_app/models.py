@@ -1,5 +1,6 @@
 from django.db import models
 import uuid
+from recpaper_app.utils.blob_storage import VercelBlobStorage
 
 
 class BaseModel(models.Model):
@@ -92,10 +93,16 @@ class Comment(BaseModel):
         return self.message
     
     
-class Files(BaseModel):
-    project = models.ForeignKey(Project, models.CASCADE, related_name = "related_project")
-    file= models.FileField()
-    message = models.TextField()
+class Files(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    file = models.FileField(storage=VercelBlobStorage())
+    message = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name_plural = "Files"
     
     
     

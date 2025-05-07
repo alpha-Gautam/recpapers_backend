@@ -30,10 +30,10 @@ urlpatterns = [
     
     path('commnets/', Project_comments.as_view(), name='Project_comments'),
     
-    path('files/<str:pk>', file_upload.as_view(), name="upload files")
+    path('files/<str:pk>', file_upload.as_view(), name="file_operations")
     
 ]
 
 # if settings.DEBUG:
 #     urlpatterns+=static(settings.MEDIA_URL, documetn_root= settings.MEDIA_ROOT)
-    
+

@@ -75,11 +75,10 @@ class ProjectCreateSerializer(serializers.ModelSerializer):
 #         models = images
 #         files="__all__"
         
-class filesSerializer(serializers.ModelSerializer):
-    
-    class MEta:
-        models = Files
-        files="__all__"
+class FilesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Files
+        fields = "__all__"
 
 
 

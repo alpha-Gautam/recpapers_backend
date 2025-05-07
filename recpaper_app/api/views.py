@@ -3,11 +3,11 @@ from rest_framework.decorators import api_view, APIView
 from recpaper_app.models import User, Mentor, Project, Project_log, Comment, Files
 from recpaper_app.api.serializers import (UserSerializer, MentorSerializer, MentorLoginSerializer,
                                           ProjectSerializer, UserLoginSerializer, ProjectLogSerializer, 
-                                          CommentSerializer,ProjectCreateSerializer, MentorCreateSerializer, 
-                                          filesSerializer)
+                                          CommentSerializer, ProjectCreateSerializer, MentorCreateSerializer, 
+                                          FilesSerializer)
 from rest_framework import status, authentication, permissions
 from  django.db.models import Q
-
+from recpaper_app.utils.blob_storage import upload_to_blob, delete_from_blob
 # ["GET","POST","PUT","PATCH", "DELETE"]
 
 
@@ -264,12 +264,53 @@ class Project_comments(APIView):
     
     
 class file_upload(APIView):
-    def get(self,request,pk):
-        queryset = Files.objects.get(project=pk)
-        serializer = filesSerializer(queryset)
-        return Response(serializer.data, status=200)
+    def get(self, request, pk):
+        try:
+            queryset = Files.objects.filter(project=pk)
+            serializer = FilesSerializer(queryset, many=True)
+            return Response(serializer.data, status=200)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
             
-        
-    # def post(self,request):
-    #     data = request.data
-        
+    def post(self, request, pk):
+        try:
+            # Verify project exists
+            project = Project.objects.get(uuid=pk)
+            
+            # Get file and message
+            file_obj = request.FILES.get('file')
+            if not file_obj:
+                return Response({"error": "No file provided"}, status=400)
+            message = request.data.get('message', '')
+            
+            # Create file record - storage backend handles upload to Vercel Blob
+            file_instance = Files.objects.create(
+                project=project,
+                file=file_obj,
+                message=message
+            )
+            
+            serializer = FilesSerializer(file_instance)
+            return Response(serializer.data, status=201)
+            
+        except Project.DoesNotExist:
+            return Response({"error": "Project not found"}, status=404)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+    
+    def delete(self, request, pk):
+        try:
+            file_uuid = request.query_params.get('file_uuid') or request.data.get('file_uuid')
+            if not file_uuid:
+                return Response({"error": "File UUID required"}, status=400)
+            
+            # Get and delete file - storage backend handles deletion from Blob
+            file_instance = Files.objects.get(uuid=file_uuid)
+            file_instance.delete()
+            
+            return Response({"message": "File deleted successfully"}, status=204)
+            
+        except Files.DoesNotExist:
+            return Response({"error": "File not found"}, status=404)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
