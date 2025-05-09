@@ -49,6 +49,8 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = "__all__"
         
 
+        
+
 class ProjectLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project_log
@@ -64,10 +66,9 @@ class ProjectCreateSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Project
-        fields="__all__"
-
-
-
+        fields = "__all__"
+        
+    
 
 # class imageSerializer(serializers.ModelSerializer):
     

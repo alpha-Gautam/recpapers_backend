@@ -30,7 +30,7 @@ urlpatterns = [
     
     path('commnets/', Project_comments.as_view(), name='Project_comments'),
     
-    path('files/<str:pk>', file_upload.as_view(), name="file_operations")
+    path('file/<str:pk>', file_upload.as_view(), name="file_operations")
     
 ]
 
