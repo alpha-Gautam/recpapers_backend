@@ -130,17 +130,17 @@ class project_view(APIView):
         except Exception as e:
             return Response(data=e,status=400)
     
-    def post(self, request):
-        try:
-            data = request.data
-            serializer = ProjectSerializer(data=data)  # Fixed: using data keyword
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=200)
-            else:
-                return Response({"message":"fill the valid data"}, status=400)  
-        except Exception as e:
-            return Response({"message": str(e)}, status=400)  # Fixed: converting exception to string
+    # def post(self, request):
+    #     try:
+    #         data = request.data
+    #         serializer = ProjectSerializer(data=data)  # Fixed: using data keyword
+    #         if serializer.is_valid():
+    #             serializer.save()
+    #             return Response(serializer.data, status=200)
+    #         else:
+    #             return Response({"message":"fill the valid data"}, status=400)  
+    #     except Exception as e:
+    #         return Response({"message": str(e)}, status=400)  # Fixed: converting exception to string
         
         
         
@@ -170,7 +170,6 @@ class project_view(APIView):
     
 class project_detail(APIView):
     def get(self,request,pk):
-    # if request.method == "GET":
         papers = Project.objects.filter(uuid=pk)
         if not papers.exists():
             return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -179,7 +178,6 @@ class project_detail(APIView):
     
     
     def delete(self, request,pk):
-    # elif request.method == "DELETE":
         if not pk:
             return Response({"error": "Project UUID is required"}, status=status.HTTP_400_BAD_REQUEST)
         try:
@@ -189,20 +187,7 @@ class project_detail(APIView):
         except Project.DoesNotExist:
             return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
         
-        
-    def put(self, request, pk):
-    # if request.method == "PUT":
-        try:
-            project = Project.objects.get(project_uuid=pk)
-        except Project.DoesNotExist:
-            return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
-        
-        serializer = ProjectSerializer(project, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+   
         
 class project_create(APIView):
     def post(self, request):
@@ -217,6 +202,27 @@ class project_create(APIView):
                 return Response({"message":str(serializer.error_messages)}, status=400)  
         except Exception as e:
             return Response({"message":str(e)},status=400)
+    
+    def patch(self, request):
+        try:
+            data = request.data
+            if "uuid" not in data:
+                return Response({"message": "Project UUID is required"}, status=400)
+            
+            project_object, created = Project.objects.get_or_create(uuid=data.get("uuid"))
+            if created:
+                return Response({"message": "Invalid project UUID"}, status=400)
+            
+            serializer = ProjectCreateSerializer(project_object, data=data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({"message": "Project updated!","data":serializer.data}, status=200)
+            else:
+                return Response({"message": "Data is not valid", "error": str(serializer.errors)}, status=400)
+        except Exception as e:
+            return Response({"message": "Something went wrong", "error": str(e)}, status=400)
+        
+        
         
 class porject_log(APIView):
     
@@ -269,6 +275,7 @@ class file_upload(APIView):
             queryset = Files.objects.filter(project=pk)
             serializer = FilesSerializer(queryset, many=True)
             return Response(serializer.data, status=200)
+        
         except Exception as e:
             return Response({"error": str(e)}, status=500)
             
@@ -276,7 +283,8 @@ class file_upload(APIView):
         try:
             # Verify project exists
             project = Project.objects.get(uuid=pk)
-            
+            if not project.exists():
+                return Response({"message":"Invalid project id"},status=400)
             # Get file and message
             file_obj = request.FILES.get('file')
             if not file_obj:

@@ -4,7 +4,7 @@ from recpaper_app.utils.blob_storage import VercelBlobStorage
 
 
 class BaseModel(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -93,20 +93,15 @@ class Comment(BaseModel):
         return self.message
     
     
-class Files(models.Model):
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+class Files(BaseModel):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     file = models.FileField(storage=VercelBlobStorage(), upload_to='project_files', max_length=500)
     message = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+
     
     class Meta:
         verbose_name_plural = "Files"
+
     
-    
-    
-# class Images(BaseModel):
-#     project = models.ForeignKey(Project, models.CASCADE, related_name="related_project")
-#     file= models.ImageField()
-#     message = models.TextField()
+    def __str__(self) -> str:
+        return self.message
