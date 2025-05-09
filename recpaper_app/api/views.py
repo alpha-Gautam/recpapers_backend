@@ -283,7 +283,7 @@ class file_upload(APIView):
         try:
             # Verify project exists
             project = Project.objects.get(uuid=pk)
-            if not project.exists():
+            if project==None:
                 return Response({"message":"Invalid project id"},status=400)
             # Get file and message
             file_obj = request.FILES.get('file')
@@ -308,15 +308,18 @@ class file_upload(APIView):
     
     def delete(self, request, pk):
         try:
-            file_uuid = request.query_params.get('file_uuid') or request.data.get('file_uuid')
-            if not file_uuid:
-                return Response({"error": "File UUID required"}, status=400)
+            # file_uuid = request.query_params.get('file_uuid') or request.data.get('file_uuid')
+            # if not file_uuid:
+            #     return Response({"error": "File UUID required"}, status=400)
             
             # Get and delete file - storage backend handles deletion from Blob
-            file_instance = Files.objects.get(uuid=file_uuid)
-            file_instance.delete()
+            file_instance = Files.objects.get(uuid=pk)
+            re=file_instance.delete()
+            if re==False:
+                return Response({"message":"deletion Failed !"}, status=400)
+                
             
-            return Response({"message": "File deleted successfully"}, status=204)
+            return Response({"message": "File deleted successfully"}, status=200)
             
         except Files.DoesNotExist:
             return Response({"error": "File not found"}, status=404)
