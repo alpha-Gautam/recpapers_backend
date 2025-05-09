@@ -1,6 +1,7 @@
 from django.db import models
 import uuid
 from recpaper_app.utils.blob_storage import VercelBlobStorage
+import vercel_blob
 
 
 class BaseModel(models.Model):
@@ -101,7 +102,24 @@ class Files(BaseModel):
     
     class Meta:
         verbose_name_plural = "Files"
+        
+        
 
     
     def __str__(self) -> str:
         return self.message
+    
+    def delete(self,*args, **kwargs):
+        try:
+            d = vercel_blob.delete(str(self.file))
+            print(f"delete from vecel {self.file} response: {d}")
+            super().delete(*args, **kwargs)
+            print(f"File '{self.pk}' deleted successfully.")
+            return True
+        except Exception as e:
+            print(f"Error deleting file '{self.pk}': {e}")
+        
+
+        
+
+    
