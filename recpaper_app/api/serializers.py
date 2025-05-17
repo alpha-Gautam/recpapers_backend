@@ -1,30 +1,30 @@
 from rest_framework import serializers
-from recpaper_app.models import User, Mentor, Project, Project_log, Comment, Files
+from recpaper_app.models import User,Student, Faculty, Mentor, Project, Project_log, Comment, Files
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Student
         exclude=["password"]
         
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Student
         fields  = "__all__"
         
 class MentorLoginSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Faculty
         exclude=["password"]
 
 class MentorSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Mentor
+        model = Faculty
         fields  = ["uuid","username"]
         
 class MentorCreateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Mentor
+        model = Faculty
         fields  = "__all__"
         
         

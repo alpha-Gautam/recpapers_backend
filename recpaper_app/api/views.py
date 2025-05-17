@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, APIView
-from recpaper_app.models import User, Mentor, Project, Project_log, Comment, Files
+from recpaper_app.models import Student, Faculty, Project, Project_log, Comment, Files
 from recpaper_app.api.serializers import (UserSerializer, MentorSerializer, MentorLoginSerializer,
                                           ProjectSerializer, UserLoginSerializer, ProjectLogSerializer, 
                                           CommentSerializer, ProjectCreateSerializer, MentorCreateSerializer, 
@@ -14,7 +14,6 @@ from recpaper_app.utils.blob_storage import upload_to_blob, delete_from_blob
 
 class user_login(APIView):
     def post(self, request):
-    # if request.method == "POST":
         data = request.data
         print("api data for user login ->",data)
         # Check if email and password are provided
@@ -23,7 +22,7 @@ class user_login(APIView):
         #==================Student Login Login===================\
             
             if("role" in data and data["role"]=="Student"):
-                userData = User.objects.filter(email=data["email"]).first()  # Use first() to get a single user
+                userData = Student.objects.filter(email=data["email"]).first()  # Use first() to get a single user
                 if userData:
                     if userData.password == data["password"]:  # Compare password
                         serializer=UserLoginSerializer(userData)
@@ -37,7 +36,7 @@ class user_login(APIView):
         
         
             elif("role" in data and  data["role"]=="Mentor"):
-                mentorData = Mentor.objects.filter(email=data["email"]).first()  # Use first() to get a single user
+                mentorData = Faculty.objects.filter(email=data["email"]).first()  # Use first() to get a single user
                 if mentorData:
                     if mentorData.password == data["password"]:  # Compare password
                         serializer=MentorLoginSerializer(mentorData)
@@ -97,13 +96,13 @@ class user_ragister(APIView):
 class user_view(APIView):
     
     def get(self, request):
-        user_data = User.objects.all()
+        user_data = Student.objects.all()
         serializer = UserSerializer(user_data,many=True)
         return Response(serializer.data)
     
 class mentor_view(APIView):
     def get(self, request):
-        mentor=Mentor.objects.all()
+        mentor=Faculty.objects.all()
         serializer = MentorSerializer(mentor ,many=True)
         return Response(serializer.data)
          
