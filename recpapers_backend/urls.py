@@ -30,7 +30,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('recpaper_app.api.urls')),
-    # path('paper/', include('recpaper_app.api.urls')),
+    path('chatApi/', include('chat_app.api.urls')),
     # path('api-auth/', include('rest_framework.urls')),
     # path('account/',include('authentication_app.urls')),
 ]
