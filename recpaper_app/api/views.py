@@ -17,7 +17,7 @@ class user_login(APIView):
         data = request.data
         print("api data for user login ->",data)
         # Check if email and password are provided
-        if "email" in data and "password" in data:
+        if("email" in data and "password" in data):
             
         #==================Student Login Login===================\
             
@@ -248,7 +248,56 @@ class project_create(APIView):
         except Exception as e:
             return Response({"message": "Something went wrong", "error": str(e)}, status=400)
         
+ 
+ 
+class verify_project(APIView):
+    # authentication_classes = [authentication.SessionAuthentication]
+    # permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request):
+        data=request.data
+        # if not pk:
+        #     return Response({"message": "Project ID is required"}, status=400)
+        print("data project:--",data)
+        try:
+            # Get the faculty user
+            user = Faculty.objects.filter(uuid=data["user"]).first()
+            if not user:
+                return Response({"message": "User not found or not a faculty member"}, status=404)
+            
+            # Check if faculty is verified by admin
+            if not user.verified_by_admin:
+                return Response({"message": "Mentor is not authenticated by admin"}, status=403)
+            
+            # Get and verify project
+            project = Project.objects.filter(uuid=data["project"]).first()
+            if not project:
+                return Response({"message": "Project not found"}, status=404)
+            
+            # Check if the requesting user is the mentor
+            if project.mentor and project.mentor.uuid != user.uuid:
+                return Response({"message": "Only the assigned project mentor can verify the project"}, status=403)
+            
+            # Update the project verification status
+            project.verified = not project.verified
+            project.save()
+            
+            serializer = ProjectCreateSerializer(project)
+            return Response({
+                "message": "Project verified successfully",
+                "data": serializer.data
+            }, status=200)
+                
+        except Exception as e:
+            return Response({
+                "message": "Something went wrong",
+                "error": str(e)
+            }, status=400)
+                
+            
+            
         
+            
         
 class porject_log(APIView):
     

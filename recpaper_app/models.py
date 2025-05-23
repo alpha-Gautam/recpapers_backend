@@ -100,6 +100,7 @@ class Mentor(BaseModel):
 class Project(BaseModel):
     user=models.ForeignKey(User,on_delete=models.CASCADE,related_name="project_author")
     mentor=models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="project_mentor")
+    semester=models.IntegerField()
     title=models.CharField(max_length=500, unique=True)
     description=models.TextField()
     objective=models.TextField()
