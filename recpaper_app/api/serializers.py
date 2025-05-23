@@ -63,6 +63,7 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class ProjectCreateSerializer(serializers.ModelSerializer):
+    github_link = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     
     class Meta:
         model = Project

@@ -211,17 +211,23 @@ class project_detail(APIView):
         
 class project_create(APIView):
     def post(self, request):
-        
         try:
             data = request.data
-            serializer = ProjectCreateSerializer(data=data)
-            if(serializer.is_valid()):
+            print("project data:", data)
+            serializer = ProjectCreateSerializer(data=data)  # Fixed: properly passing data parameter
+            if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=200)
             else:
-                return Response({"message":str(serializer.error_messages)}, status=400)  
+                return Response({
+                    "message": "Validation failed",
+                    "errors": serializer.errors
+                }, status=400)  
         except Exception as e:
-            return Response({"message":str(e)},status=400)
+            return Response({
+                "message": "Something went wrong",
+                "error": str(e)
+            }, status=400)
     
     def patch(self, request):
         try:
@@ -280,7 +286,7 @@ class Project_comments(APIView):
     def post(self, request):            
     # if request.methode=="POST":
         data=request.data
-        serializer = CommentSerializer(data)
+        serializer = CommentSerializer(data=data)  # Fixed: properly passing data parameter
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
