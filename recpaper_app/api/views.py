@@ -66,7 +66,8 @@ class user_ragister(APIView):
         data=request.data
         try:
             if(data["is_student"]==True and data["is_faculty"]==False):
-
+                data["role"]="STUDENT"
+                
                 serializer = UserSerializer(data=data)
                 # print("data for user ragristration--->",data)
                 print("afer serialize data for user ragristration--->",serializer)
@@ -77,6 +78,7 @@ class user_ragister(APIView):
                     return Response(serializer.errors,status=400)
                 
             elif(data["is_student"]==False and data["is_faculty"]==True):
+                data["role"]="FACULTY"
 
                 serializer = MentorCreateSerializer(data=data)
                 print("data for user ragristration--->",data)
@@ -106,6 +108,25 @@ class mentor_view(APIView):
         serializer = MentorSerializer(mentor ,many=True)
         return Response(serializer.data)
          
+         
+class User_project_view(APIView):
+    def get(self,request):
+        # user = request.user
+        data=request.data
+        print("user_data-->",data)
+        # print("user_-->",user)
+        try:
+            queryset = Project.objects.filter(Q(user__iexact=data["user_id"])|Q(mentor__iexact=data["user_id"]))
+            return Response(
+                {"message":"user project",
+                 "data":queryset},
+                status=200
+            )
+            
+        except Exception as e:
+            return Response({"message":"something went wrong","error":str(e)},status=400)
+            
+            
     
 class project_view(APIView):
     

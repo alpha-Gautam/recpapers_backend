@@ -1,6 +1,6 @@
 from django.urls import path, include
 
-from recpaper_app.api.views import project_view, user_view, project_detail, user_login, user_ragister
+from recpaper_app.api.views import project_view, user_view, project_detail, user_login, user_ragister, User_project_view
 from recpaper_app.api.views import porject_log, Project_comments,mentor_view,project_create, file_upload
 
 
@@ -21,6 +21,7 @@ urlpatterns = [
     
     
     path('project/', project_view.as_view(), name='paper_list'),
+    path('user_project/', User_project_view.as_view(), name='paper_list'),
     path('project/<str:pk>/', project_detail.as_view(), name='project_detail'),
     path('project_create/', project_create.as_view(), name='project_create'),
     
