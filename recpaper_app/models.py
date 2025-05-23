@@ -70,7 +70,8 @@ class Faculty(User):
     role = User.Role.FACULTY
     is_faculty=True
     is_student=False
-    object = FacultyManager()
+    
+    objects = FacultyManager()
 
     class Meta:
         proxy = True
