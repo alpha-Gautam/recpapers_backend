@@ -99,14 +99,14 @@ class Mentor(BaseModel):
 
 class Project(BaseModel):
     user=models.ForeignKey(User,on_delete=models.CASCADE,related_name="project_author")
-    mentor=models.ForeignKey(Faculty, on_delete=models.SET_NULL, null=True, related_name="project_mentor")
+    mentor=models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="project_mentor")
     title=models.CharField(max_length=500, unique=True)
     description=models.TextField()
     objective=models.TextField()
     status = models.CharField(max_length=500)
     keyword =models.TextField()
     platform =models.TextField()
-    github_link = models.CharField(max_length=500)
+    github_link = models.CharField(max_length=500, null=True)
     verified = models.BooleanField(default=False)
     public = models.BooleanField(default=False)
     group = models.BooleanField(default=False)
