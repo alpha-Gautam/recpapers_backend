@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, APIView
-from recpaper_app.models import Student, Faculty, Project, Project_log, Comment, Files
+from recpaper_app.models import User,Student, Faculty, Project, Project_log, Comment, Files
 from recpaper_app.api.serializers import (UserSerializer, MentorSerializer, MentorLoginSerializer,
                                           ProjectSerializer, UserLoginSerializer, ProjectLogSerializer, 
                                           CommentSerializer, ProjectCreateSerializer, MentorCreateSerializer, 
@@ -22,7 +22,7 @@ class user_login(APIView):
         #==================Student Login Login===================\
             
             if("role" in data and data["role"]=="Student"):
-                userData = Student.objects.filter(email=data["email"]).first()  # Use first() to get a single user
+                userData = User.objects.filter(email=data["email"]).first()  # Use first() to get a single user
                 if userData:
                     if userData.password == data["password"]:  # Compare password
                         serializer=UserLoginSerializer(userData)
@@ -36,7 +36,7 @@ class user_login(APIView):
         
         
             elif("role" in data and  data["role"]=="Mentor"):
-                mentorData = Faculty.objects.filter(email=data["email"]).first()  # Use first() to get a single user
+                mentorData = User.objects.filter(email=data["email"]).first()  # Use first() to get a single user
                 if mentorData:
                     if mentorData.password == data["password"]:  # Compare password
                         serializer=MentorLoginSerializer(mentorData)
@@ -109,19 +109,17 @@ class mentor_view(APIView):
         return Response(serializer.data)
          
          
-class User_project_view(APIView):
-    def get(self,request):
+class User_projects_view(APIView):
+    def get(self,request,pk):
         # user = request.user
-        data=request.data
-        print("user_data-->",data)
+        user=pk
+        print("user_data-->",user)
         # print("user_-->",user)
         try:
-            queryset = Project.objects.filter(Q(user__iexact=data["user_id"])|Q(mentor__iexact=data["user_id"]))
-            return Response(
-                {"message":"user project",
-                 "data":queryset},
-                status=200
-            )
+            queryset = Project.objects.filter(Q(user__uuid__icontains=user)|Q(mentor__uuid__icontains=user))
+            serializer = ProjectSerializer(queryset,many=True)
+            return Response(data=serializer.data,status=200)
+               
             
         except Exception as e:
             return Response({"message":"something went wrong","error":str(e)},status=400)
@@ -132,7 +130,7 @@ class project_view(APIView):
     
     def get(self, request):
         try:
-            queryset = Project.objects.all()
+            queryset = Project.objects.filter(public=True)
 
             if(request.GET.get("search")):
                 search = request.GET.get("search")
@@ -276,17 +274,27 @@ class verify_project(APIView):
             
             # Check if the requesting user is the mentor
             if project.mentor and project.mentor.uuid != user.uuid:
-                return Response({"message": "Only the assigned project mentor can verify the project"}, status=403)
+                return Response({"message": "Only the assigned project mentor can verify or change visibility the project"}, status=403)
             
             # Update the project verification status
-            project.verified = not project.verified
-            project.save()
+            if("virification" in data):
+                project.verified = not project.verified
+                project.save()
+                serializer = ProjectCreateSerializer(project)
+                return Response({
+                    "message": "Project verification status changed successfully",
+                    "data": serializer.data
+                }, status=200)
             
-            serializer = ProjectCreateSerializer(project)
-            return Response({
-                "message": "Project verified successfully",
-                "data": serializer.data
-            }, status=200)
+            if("visibility" in data):
+                project.public = not project.public
+                project.save()
+            
+                serializer = ProjectCreateSerializer(project)
+                return Response({
+                    "message": "Project visibility changed successfully",
+                    "data": serializer.data
+                }, status=200)
                 
         except Exception as e:
             return Response({
