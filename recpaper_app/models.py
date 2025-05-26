@@ -75,6 +75,7 @@ class Faculty(User):
 
     class Meta:
         proxy = True
+        ordering=['username']
 
     def welcome(self):
         return "Only for students"
