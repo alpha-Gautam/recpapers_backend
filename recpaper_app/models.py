@@ -158,6 +158,7 @@ class Files(BaseModel):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     file = models.FileField(storage=VercelBlobStorage(), upload_to='project_files', max_length=500)
     message = models.TextField(blank=True, null=True)
+    public = models.BooleanField(default=True)
 
     
     class Meta:
