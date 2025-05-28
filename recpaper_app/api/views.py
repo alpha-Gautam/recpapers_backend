@@ -15,7 +15,7 @@ from recpaper_app.utils.blob_storage import upload_to_blob, delete_from_blob
 class user_login(APIView):
     def post(self, request):
         data = request.data
-        print("api data for user login ->",data)
+        # print("api data for user login ->",data)
         # Check if email and password are provided
         if("email" in data and "password" in data):
             
@@ -69,8 +69,8 @@ class user_ragister(APIView):
                 data["role"]="STUDENT"
                 
                 serializer = UserSerializer(data=data)
-                # print("data for user ragristration--->",data)
-                print("afer serialize data for user ragristration--->",serializer)
+                # # print("data for user ragristration--->",data)
+                # print("afer serialize data for user ragristration--->",serializer)
                 if serializer.is_valid():
                     serializer.save()
                     return Response(serializer.data)
@@ -81,8 +81,8 @@ class user_ragister(APIView):
                 data["role"]="FACULTY"
 
                 serializer = MentorCreateSerializer(data=data)
-                print("data for user ragristration--->",data)
-                print("afer serialize data for user ragristration--->",serializer)
+                # print("data for user ragristration--->",data)
+                # print("afer serialize data for user ragristration--->",serializer)
                 if serializer.is_valid():
                     serializer.save()
                     return Response(serializer.data)
@@ -91,7 +91,7 @@ class user_ragister(APIView):
                 
                 
         except Exception as e:
-            print("Error during ragister:- ",e)
+            # print("Error during ragister:- ",e)
             return Response({"message":"something went wrong"},status=400)
             
         
@@ -113,8 +113,8 @@ class User_projects_view(APIView):
     def get(self,request,pk):
         # user = request.user
         user=pk
-        print("user_data-->",user)
-        # print("user_-->",user)
+        # print("user_data-->",user)
+        # # print("user_-->",user)
         try:
             queryset = Project.objects.filter(Q(user__uuid__icontains=user)|Q(mentor__uuid__icontains=user))
             serializer = ProjectSerializer(queryset,many=True)
@@ -129,12 +129,12 @@ class User_projects_view(APIView):
 class project_view(APIView):
     
     def get(self, request):
-        # print("...")
+        # # print("...")
 
-        # print("request data for project view--->",request)
-        # print("request get for project view--->",request.user)
+        # # print("request data for project view--->",request)
+        # # print("request get for project view--->",request.user)
         
-        # print("...")
+        # # print("...")
         try:
             queryset = Project.objects.filter(public=True)
 
@@ -197,7 +197,7 @@ class project_create(APIView):
     def post(self, request):
         try:
             data = request.data
-            print("project data:", data)
+            # print("project data:", data)
             serializer = ProjectCreateSerializer(data=data)  # Fixed: properly passing data parameter
             if serializer.is_valid():
                 serializer.save()
@@ -242,7 +242,7 @@ class verify_project(APIView):
         data=request.data
         # if not pk:
         #     return Response({"message": "Project ID is required"}, status=400)
-        print("data project:--",data)
+        # print("data project:--",data)
         try:
             # Get the faculty user
             user = Faculty.objects.filter(uuid=data["user"]).first()
@@ -340,22 +340,32 @@ class Project_comments(APIView):
     
 class file_upload(APIView):
     def get(self, request, pk):
-        print("user for file fetch--->",request.user)
+        # # print("user for file fetch--->",pk)
+        # # print("user for file fetch--->",request)
         try:
-            # project= Project.objects.filter(uuid=pk).first()
-            # if not project:
-            #     return Response({"message": "Invalid project id"}, status=400)
-            # if  request.user.uuid != project.user.uuid and request.user.uuid != project.mentor.uuid:
-            #     queryset = Files.objects.filter(project=pk, public=True)
-            # else:
-            queryset = Files.objects.filter(project=pk)
+            if "user" in request.GET: 
+                user = request.GET["user"]
+            else:
+                user = None
                 
+            print("user for file fetch--->",user)
+                
+            project= Project.objects.filter(uuid=pk).first()
+            if not project:
+                return Response({"message": "Invalid project id"}, status=400)
+            print("project user for file fetch--->",project.user.uuid)
+            print("project mentor for file fetch--->",project.mentor.uuid)
+            print("user match",user == str(project.user.uuid) or user == str(project.mentor.uuid))
+            if  user == str(project.user.uuid) or user == str(project.mentor.uuid):
+                queryset = Files.objects.filter(project=pk)
+            else:
+                queryset = Files.objects.filter(project=pk, public=True)
             serializer = FilesSerializer(queryset, many=True)
             return Response(serializer.data, status=200)
-        
+
         except Exception as e:
             return Response({"error": str(e)}, status=500)
-            
+
     def post(self, request, pk):
         try:
             # Verify project exists
@@ -411,7 +421,7 @@ class file_visibility(APIView):
 
     def patch(self, request):
         data=request.data
-        print("data project:--",data)
+        # print("data project:--",data)
         try:
             # Get the faculty user
             user = Faculty.objects.filter(uuid=data["user"]).first()
@@ -424,7 +434,7 @@ class file_visibility(APIView):
             if not file:
                 return Response({"message": "File not found"}, status=404)
 
-            print("project uuid-> ",file.project)
+            # print("project uuid-> ",file.project)
             project = Project.objects.filter(title=file.project).first()
             # Check if the requesting user is the mentor
             if project.mentor.uuid != user.uuid and project.user.uuid != user.uuid:
@@ -446,6 +456,5 @@ class file_visibility(APIView):
                 "message": "Something went wrong",
                 "error": str(e)
             }, status=400)
-                
-            
-       
+
+
