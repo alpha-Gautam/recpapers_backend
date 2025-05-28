@@ -18,46 +18,56 @@ class user_login(APIView):
         # print("api data for user login ->",data)
         # Check if email and password are provided
         if("email" in data and "password" in data):
-            
-        #==================Student Login Login===================\
-            
-            if("role" in data and data["role"]=="Student"):
-                userData = User.objects.filter(email=data["email"]).first()  # Use first() to get a single user
-                if userData:
-                    if userData.password == data["password"]:  # Compare password
-                        serializer=UserLoginSerializer(userData)
-                        return Response(data=serializer.data, status=200)
-                    else:
-                        return Response({"message": "Password is incorrect!"}, status=401)
+            userData = User.objects.filter(email=data["email"]).first()  # Use first() to get a single user
+            if userData:
+                if userData.password == data["password"]:  # Compare password
+                    serializer=UserLoginSerializer(userData)
+                    return Response(data=serializer.data, status=200)
                 else:
-                    return Response({"message": "User not found! Enter rignt email"}, status=404)
-
-        #==================Mentor Login Login===================
-        
-        
-            elif("role" in data and  data["role"]=="Mentor"):
-                mentorData = User.objects.filter(email=data["email"]).first()  # Use first() to get a single user
-                if mentorData:
-                    if mentorData.password == data["password"]:  # Compare password
-                        serializer=MentorLoginSerializer(mentorData)
-                        return Response(data=serializer.data, status=200)
-                    else:
-                        return Response({"message": "Password is incorrect!"}, status=401)
-                else:
-                    return Response({"message": "User not found! Enter rignt email"}, status=404)
-                    
+                    return Response({"message": "Password is incorrect!"}, status=401)
             else:
-                return Response({
-                    "status":False,
-                    "message" : "Some thing went worng please try againg"
-                },status=400)
-        else:
-            return Response({"message": "Email and password are required!"}, status=400)
+                return Response({"message": "User not found! Enter rignt email"}, status=404)
+
+            
+        # #==================Student Login Login===================\
+            
+        #     if("role" in data and data["role"]=="Student"):
+        #         userData = User.objects.filter(email=data["email"]).first()  # Use first() to get a single user
+        #         if userData:
+        #             if userData.password == data["password"]:  # Compare password
+        #                 serializer=UserLoginSerializer(userData)
+        #                 return Response(data=serializer.data, status=200)
+        #             else:
+        #                 return Response({"message": "Password is incorrect!"}, status=401)
+        #         else:
+        #             return Response({"message": "User not found! Enter rignt email"}, status=404)
+
+        # #==================Mentor Login Login===================
+        
+        
+        #     elif("role" in data and  data["role"]=="Mentor"):
+        #         mentorData = User.objects.filter(email=data["email"]).first()  # Use first() to get a single user
+        #         if mentorData:
+        #             if mentorData.password == data["password"]:  # Compare password
+        #                 serializer=MentorLoginSerializer(mentorData)
+        #                 return Response(data=serializer.data, status=200)
+        #             else:
+        #                 return Response({"message": "Password is incorrect!"}, status=401)
+        #         else:
+        #             return Response({"message": "User not found! Enter rignt email"}, status=404)
+                    
+        #     else:
+        #         return Response({
+        #             "status":False,
+        #             "message" : "Some thing went worng please try againg"
+        #         },status=400)
+        # else:
+        #     return Response({"message": "Email and password are required!"}, status=400)
             
             
-        # papers = User.objects.filter(email=pk)
-        # serializer = UserSerializer(papers,many=True)
-        # return Response(serializer.data)
+        # # papers = User.objects.filter(email=pk)
+        # # serializer = UserSerializer(papers,many=True)
+        # # return Response(serializer.data)
  
  
 
