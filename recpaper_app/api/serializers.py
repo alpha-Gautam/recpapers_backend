@@ -34,6 +34,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     mentor = serializers.SerializerMethodField()
     p_user = serializers.SerializerMethodField()
+    college = serializers.SerializerMethodField()
     
     def get_user(self,obj):
         return obj.user.username
@@ -43,6 +44,8 @@ class ProjectSerializer(serializers.ModelSerializer):
     
     def get_p_user(self,obj):
         return [obj.user.uuid,obj.mentor.uuid]
+    def get_college(self,obj):
+        return obj.user.college
     
     class Meta:
         model = Project

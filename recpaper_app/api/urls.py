@@ -1,7 +1,7 @@
 from django.urls import path, include
 
 from recpaper_app.api.views import project_view, user_view, project_detail, user_login, user_ragister, User_projects_view,verify_project
-from recpaper_app.api.views import porject_log, Project_comments,mentor_view,project_create, file_upload
+from recpaper_app.api.views import porject_log, Project_comments,mentor_view,project_create, file_upload,file_visibility
 
 
 # from django.conf import settings
@@ -30,10 +30,11 @@ urlpatterns = [
     path('log/<str:pk>/', porject_log.as_view(), name='Project_Log'),
     path('log/', porject_log.as_view(), name='Project_Log'),
     
-    path('commnets/', Project_comments.as_view(), name='Project_comments'),
-    
-    path('file/<str:pk>', file_upload.as_view(), name="file_operations")
-    
+    path('comments/', Project_comments.as_view(), name='Project_comments'),
+
+    path('file/<str:pk>', file_upload.as_view(), name="file_fetch"),
+    path('file_visibility/', file_visibility.as_view(), name="file_visibility"),
+
 ]
 
 # if settings.DEBUG:

@@ -129,6 +129,12 @@ class User_projects_view(APIView):
 class project_view(APIView):
     
     def get(self, request):
+        # print("...")
+
+        # print("request data for project view--->",request)
+        # print("request get for project view--->",request.user)
+        
+        # print("...")
         try:
             queryset = Project.objects.filter(public=True)
 
@@ -148,18 +154,7 @@ class project_view(APIView):
         except Exception as e:
             return Response(data=e,status=400)
     
-    # def post(self, request):
-    #     try:
-    #         data = request.data
-    #         serializer = ProjectSerializer(data=data)  # Fixed: using data keyword
-    #         if serializer.is_valid():
-    #             serializer.save()
-    #             return Response(serializer.data, status=200)
-    #         else:
-    #             return Response({"message":"fill the valid data"}, status=400)  
-    #     except Exception as e:
-    #         return Response({"message": str(e)}, status=400)  # Fixed: converting exception to string
-        
+     
         
         
     def delete(self, request):
@@ -175,15 +170,6 @@ class project_view(APIView):
         except Project.DoesNotExist:
             return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
     
-    # def put(self, request):
-    # if request.method == "PUT":
-    #     serializer = ProjectSerializer(data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data)
-    #     else:
-    #         return Response(serializer.errors)
-        
         
     
 class project_detail(APIView):
@@ -277,7 +263,7 @@ class verify_project(APIView):
                 return Response({"message": "Only the assigned project mentor can verify or change visibility the project"}, status=403)
             
             # Update the project verification status
-            if("virification" in data):
+            if("verification" in data):
                 project.verified = not project.verified
                 project.save()
                 serializer = ProjectCreateSerializer(project)
@@ -354,8 +340,16 @@ class Project_comments(APIView):
     
 class file_upload(APIView):
     def get(self, request, pk):
+        print("user for file fetch--->",request.user)
         try:
+            # project= Project.objects.filter(uuid=pk).first()
+            # if not project:
+            #     return Response({"message": "Invalid project id"}, status=400)
+            # if  request.user.uuid != project.user.uuid and request.user.uuid != project.mentor.uuid:
+            #     queryset = Files.objects.filter(project=pk, public=True)
+            # else:
             queryset = Files.objects.filter(project=pk)
+                
             serializer = FilesSerializer(queryset, many=True)
             return Response(serializer.data, status=200)
         
@@ -408,3 +402,50 @@ class file_upload(APIView):
             return Response({"error": "File not found"}, status=404)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+
+
+
+class file_visibility(APIView):
+    # authentication_classes = [authentication.SessionAuthentication]
+    # permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request):
+        data=request.data
+        print("data project:--",data)
+        try:
+            # Get the faculty user
+            user = Faculty.objects.filter(uuid=data["user"]).first()
+            if not user:
+                return Response({"message": "User not found or not a faculty member"}, status=404)
+            
+           
+            # Get and verify project
+            file = Files.objects.filter(uuid=data["file"]).first()
+            if not file:
+                return Response({"message": "File not found"}, status=404)
+
+            print("project uuid-> ",file.project)
+            project = Project.objects.filter(title=file.project).first()
+            # Check if the requesting user is the mentor
+            if project.mentor.uuid != user.uuid and project.user.uuid != user.uuid:
+                return Response({"message": "Only project author or project mentor can change visibility the project"}, status=403)
+            
+            
+            if("visibility" in data):
+                file.public = not file.public
+                file.save()
+            
+                serializer = FilesSerializer(file)
+                return Response({
+                    "message": "File visibility changed successfully",
+                    "data": serializer.data
+                }, status=200)
+                
+        except Exception as e:
+            return Response({
+                "message": "Something went wrong",
+                "error": str(e)
+            }, status=400)
+                
+            
+       
