@@ -1,4 +1,5 @@
 from rest_framework.response import Response
+from django.http import JsonResponse
 from rest_framework.decorators import api_view, APIView
 from recpaper_app.models import User,Student, Faculty, Project, Project_log, Comment, Files
 from recpaper_app.api.serializers import (UserSerializer, MentorSerializer, MentorLoginSerializer,
@@ -11,6 +12,10 @@ from recpaper_app.utils.blob_storage import upload_to_blob, delete_from_blob
 # ["GET","POST","PUT","PATCH", "DELETE"]
 
 
+def index(request):
+    ip = request.META.get('REMOTE_ADDR', 'Unknown IP')
+    print("IP address of the request:", ip)
+    return JsonResponse({"message": "Hello, Hero!", "ip": ip}, status=200)
 
 class user_login(APIView):
     def post(self, request):
@@ -274,6 +279,8 @@ class verify_project(APIView):
             
             # Update the project verification status
             if("verification" in data):
+                if(project.public == True):
+                    project.public = False
                 project.verified = not project.verified
                 project.save()
                 serializer = ProjectCreateSerializer(project)
@@ -283,6 +290,8 @@ class verify_project(APIView):
                 }, status=200)
             
             if("visibility" in data):
+                if(project.verified == False):
+                    return Response({"message": "Project must be verified before changing visibility"}, status=201)
                 project.public = not project.public
                 project.save()
             

@@ -25,9 +25,14 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from django.http import HttpResponse
 
+def index(request):
+    return HttpResponse("Welcome to RecPapers Backend API.\n Please use the /api/ or /chatApi/ endpoints for accessing the APIs.")
 
 urlpatterns = [
+    path('', index, name='index'),
+    
     path('admin/', admin.site.urls),
     path('api/', include('recpaper_app.api.urls')),
     path('chatApi/', include('chat_app.api.urls')),

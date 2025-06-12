@@ -48,7 +48,7 @@ class User(BaseModel):
     verified_by_admin = models.BooleanField(default=False)
     
     def __str__(self):
-        return f"Name: {self.username} Role: {self.role}"
+        return f"{self.username}"
     
     
 
@@ -112,8 +112,8 @@ class Project(BaseModel):
     verified = models.BooleanField(default=False)
     public = models.BooleanField(default=False)
     group = models.BooleanField(default=False)
-    
-  
+    collaboration = models.BooleanField(default=False)
+
     def __str__(self):
         return self.title
     
