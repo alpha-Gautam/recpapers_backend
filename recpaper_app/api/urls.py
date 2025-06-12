@@ -1,16 +1,16 @@
 from django.urls import path, include
 
 from recpaper_app.api.views import project_view, user_view, project_detail, user_login, user_ragister, User_projects_view,verify_project
-from recpaper_app.api.views import porject_log, Project_comments,mentor_view,project_create, file_upload,file_visibility
+from recpaper_app.api.views import porject_log, Project_comments,mentor_view,project_create, file_upload,file_visibility,index
 
 
 # from django.conf import settings
 # from django.conf.urls.static import static
  
 
-
 urlpatterns = [
-   
+    path('', index, name='index'),
+
     path('login/', user_login.as_view(), name='user_login'),
     path('ragister/', user_ragister.as_view(), name='user_ragister'),
     
