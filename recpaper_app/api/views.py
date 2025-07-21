@@ -76,7 +76,7 @@ class user_login(APIView):
  
  
 
-class user_ragister(APIView):
+class user_register(APIView):
     def post(self, request):
         data=request.data
         try:
@@ -373,9 +373,9 @@ class file_upload(APIView):
             if not project:
                 return Response({"message": "Invalid project id"}, status=400)
             print("project user for file fetch--->",project.user.uuid)
-            print("project mentor for file fetch--->",project.mentor.uuid)
-            print("user match",user == str(project.user.uuid) or user == str(project.mentor.uuid))
-            if  user == str(project.user.uuid) or user == str(project.mentor.uuid):
+            print("project mentor for file fetch--->",project.mentor.uuid if project.mentor else None)
+            print("user match",user == str(project.user.uuid) or user == str(project.mentor.uuid if project.mentor else None))
+            if  user == str(project.user.uuid) or user == str(project.mentor.uuid if project.mentor else None):
                 queryset = Files.objects.filter(project=pk)
             else:
                 queryset = Files.objects.filter(project=pk, public=True)
@@ -456,7 +456,9 @@ class file_visibility(APIView):
             # print("project uuid-> ",file.project)
             project = Project.objects.filter(title=file.project).first()
             # Check if the requesting user is the mentor
-            if project.mentor.uuid != user.uuid and project.user.uuid != user.uuid:
+            if not project:
+                return Response({"message": "Project not found"}, status=404)
+            if project and project.mentor and (project.mentor.uuid != user.uuid and project.user.uuid != user.uuid):
                 return Response({"message": "Only project author or project mentor can change visibility the project"}, status=403)
             
             

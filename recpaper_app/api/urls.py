@@ -1,6 +1,6 @@
 from django.urls import path, include
 
-from recpaper_app.api.views import project_view, user_view, project_detail, user_login, user_ragister, User_projects_view,verify_project
+from recpaper_app.api.views import project_view, user_view, project_detail, user_login, user_register, User_projects_view,verify_project
 from recpaper_app.api.views import porject_log, Project_comments,mentor_view,project_create, file_upload,file_visibility,index
 
 
@@ -12,9 +12,9 @@ urlpatterns = [
     path('', index, name='index'),
 
     path('login/', user_login.as_view(), name='user_login'),
-    path('ragister/', user_ragister.as_view(), name='user_ragister'),
-    
-    
+    path('register/', user_register.as_view(), name='user_register'),
+
+
     path('user/', user_view.as_view(), name='user_list'),
     path('mentor/', mentor_view.as_view(), name='mentor_list'),
     # path('platform/', platform_view.as_view(), name='platform_list'),

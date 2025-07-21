@@ -168,8 +168,8 @@ class Files(BaseModel):
 
     
     def __str__(self) -> str:
-        return self.message
-    
+        return f"Title:{self.project.title} File:{self.message or 'No file Descriptions'}"
+
     def delete(self,*args, **kwargs):
         try:
             d = vercel_blob.delete(str(self.file))
