@@ -1,5 +1,5 @@
 from django.contrib import admin
-from recpaper_app.models import User,Mentor, Project, Project_log, Comment, Files,Faculty,Student
+from recpaper_app.models import User, Project, Project_log, Comment, Files,Faculty,Student
 
 # Register your models here.
 
@@ -19,16 +19,6 @@ class ProjectAdmin(admin.ModelAdmin):
     # list_filter = ("user")
     
     
-    
-# admin.site.register(Mentor)
-@admin.register(Mentor)
-class MentorAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'mobile', 'college')
-    search_fields = ('username', 'email', 'mobile', 'college')
-
-# @class Project_logAdmin(admin.ModelAdmin):
-#     list_display = ('project', 'log_date', 'log_description')
-#     search_fields = ('project__title', 'log_description')
     
     
 admin.site.register(Project_log)
