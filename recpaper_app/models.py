@@ -81,21 +81,21 @@ class Faculty(User):
         return "Only for students"
     
    
-# do not use mentor table
-class Mentor(BaseModel):
-    username = models.CharField(max_length=50)
-    mobile=models.CharField(max_length=20)
-    roll_no=models.CharField(max_length=50, unique=True)
-    email=models.EmailField(max_length=50,unique=True)
-    password=models.CharField(max_length=50)
-    college=models.CharField(max_length=100)
-    department=models.CharField(max_length=100)
-    is_faculty = models.BooleanField(default=True)
-    verified = models.BooleanField(default=False)
-    active = models.BooleanField(default=True)
+# # do not use mentor table
+# class Mentor(BaseModel):
+#     username = models.CharField(max_length=50)
+#     mobile=models.CharField(max_length=20)
+#     roll_no=models.CharField(max_length=50, unique=True)
+#     email=models.EmailField(max_length=50,unique=True)
+#     password=models.CharField(max_length=50)
+#     college=models.CharField(max_length=100)
+#     department=models.CharField(max_length=100)
+#     is_faculty = models.BooleanField(default=True)
+#     verified = models.BooleanField(default=False)
+#     active = models.BooleanField(default=True)
     
-    def __str__(self):
-        return self.username
+#     def __str__(self):
+#         return self.username
     
 
 class Project(BaseModel):
