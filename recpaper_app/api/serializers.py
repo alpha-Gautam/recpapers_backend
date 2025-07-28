@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from recpaper_app.models import User,Student, Faculty, Mentor, Project, Project_log, Comment, Files
+from recpaper_app.models import User,Student, Faculty, Project, Project_log, Comment, Files
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
