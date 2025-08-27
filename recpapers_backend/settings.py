@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = 'django-insecure-+fyft9_*r@8v#@72xm0zcb69r9fofml)8+$i1np*70j@728o#q'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
@@ -63,10 +63,10 @@ INSTALLED_APPS = [
     'recpaper_app',
     'corsheaders',
     'chat_app',
-    
-    
-    
-    
+    'account',
+
+
+
 ]
 
 MIDDLEWARE = [
@@ -135,8 +135,7 @@ DATABASES = {
     # }
 }
 
-DATABASES['default'] = dj_database_url.parse("postgres://neondb_owner:npg_LRem3Hyh8gOu@ep-sweet-lab-a1l265vt-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require")
-# render postgrey url = "postgres://neondb_owner:npg_LRem3Hyh8gOu@ep-sweet-lab-a1l265vt-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
+DATABASES['default'] = dj_database_url.parse("DATABASE_URL","")
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
