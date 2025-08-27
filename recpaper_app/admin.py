@@ -6,9 +6,9 @@ from recpaper_app.models import User, Project, Project_log, Comment, Files,Facul
 # admin.site.register(User)
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email','mobile', 'college', 'department', 'role', 'active', 'verified_by_admin','created_at')
+    list_display = ('username', 'email','mobile', 'college', 'department', 'role', 'is_active', 'verified_by_admin','created_at')
     search_fields = ('username', 'email', 'mobile', 'college', 'department')
-    list_filter = ('role', 'active', 'verified_by_admin')
+    list_filter = ('role', 'is_active', 'verified_by_admin')
 
 
 # admin.site.register(Project)
