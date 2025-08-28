@@ -37,7 +37,6 @@ urlpatterns = [
     path('account/',include('account.urls')),
     path('api/', include('recpaper_app.api.urls')),
     path('chatApi/', include('chat_app.api.urls')),
-    # path('api-auth/', include('rest_framework.urls')),
 ]
 
 if settings.DEBUG:
