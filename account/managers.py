@@ -43,6 +43,7 @@ class UserManager(BaseUserManager):
         )
         user.role = User.Role.STUDENT
         user.is_active = False
+        user.verified_by_admin = False
         user.save(using=self._db)
         return user
 
@@ -57,6 +58,7 @@ class UserManager(BaseUserManager):
         )
         user.role = User.Role.FACULTY
         user.is_active = False
+        user.verified_by_admin = False
         user.save(using=self._db)
         return user
 
@@ -71,6 +73,7 @@ class UserManager(BaseUserManager):
         user.role = User.Role.STAFF
         user.is_staff = True
         user.is_active = False
+        user.verified_by_admin = False
         user.save(using=self._db)
         return user
 
