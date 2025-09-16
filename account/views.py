@@ -3,13 +3,21 @@ from rest_framework.response import Response
 from rest_framework import status
 from account.models import User
 from account.serializers import UserSerializer
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
 
+@method_decorator(ensure_csrf_cookie, name='dispatch')
+class GetCookies(APIView):
+    def get(self,request):
+        return Response({"csrfToken": request.META.get('CSRF_COOKIE', '')}, status=status.HTTP_200_OK)
 
+        # return Response({"message": "CSRF cookie set"})
 
+@method_decorator(csrf_protect, name="dispatch")
 class UserLoginView(APIView):
-    def get(self, request):
-        email = request.GET.get("email")
-        password = request.GET.get("password")
+    def post(self, request):
+        email = request.data.get("email")
+        password = request.data.get("password")
         user = User.objects.filter(email=email).first()
         if user and user.check_password(password):
             return Response({"message": "Login successful.","data":UserSerializer(user).data}, status=status.HTTP_200_OK)
