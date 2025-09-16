@@ -158,6 +158,12 @@ class Files(BaseModel):
             print(f"Error deleting file '{self.pk}': {e}")
         
 
-        
+
+class DB_health(BaseModel):
+    status = models.CharField(max_length=100)
+    message = models.TextField()
+    
+    def __str__(self) -> str:
+        return f"Status: {self.status} Message: {self.message}"
 
     

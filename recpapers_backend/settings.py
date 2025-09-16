@@ -187,4 +187,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-AUTH_USER_MODEL='recpaper_app.User'
+
+AUTH_USER_MODEL = 'account.User'
