@@ -5,6 +5,12 @@ from account.models import User
 from account.serializers import UserSerializer
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.urls import reverse
+from django.conf import settings
+from .utils import send_activation_email
 
 @method_decorator(ensure_csrf_cookie, name='dispatch')
 class GetCookies(APIView):
@@ -28,6 +34,17 @@ class UserRegisterView(APIView):
     def post(self, request):
         serializer=UserSerializer(data=request.data)
         if serializer.is_valid():
-            user = serializer.save()
-            return Response({"message": "User registered successfully.","data":serializer.data}, status=status.HTTP_201_CREATED)
+            user = serializer.create(serializer.validated_data)
+             
+            uid=urlsafe_base64_encode(force_bytes(user.id))
+            
+            token= default_token_generator.make_token(user)
+            activation_link = reverse('activate', kwargs={'uid': uid, 'token': token})
+            activation_url= f'{settings.SITE_DOMAIN}{activation_link}'
+            print("activation link--",activation_link)
+            print("activation url--",activation_url)
+            send_activation_email(user.email, activation_url)
+            
+
+            return Response({"message": "email verification sent successfully.","data":UserSerializer(user).data,"activation_link":activation_link}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

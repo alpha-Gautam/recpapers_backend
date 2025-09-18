@@ -10,11 +10,12 @@ from django.http import HttpResponse
 
 urlpatterns = [
     path('get-cookies/', GetCookies.as_view(), name='get-cookies'),
+    
     path('register/', UserRegisterView.as_view(), name='user-register'),
     path('login/', UserLoginView.as_view(), name='user-login'),
+    
 
-    # path('api/', include('recpaper_app.api.urls')),
-    # path('chatApi/', include('chat_app.api.urls')),
+   \
    
 ]
 
