@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Verified</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .container {
+        text-align: center;
+        background-color: #fff;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #4caf50;
+      }
+      p {
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      {% if status == 'already_activated' %}
+      <h1>Email Already Verified</h1>
+      <p>
+        Your email has already been verified. You can log in to your account.
+      </p>
+      {% elif status == 'invalid' %}
+      <h1>Email Verification Successful!</h1>
+      <p>Your account has been successfully activated.</p>
+      <p>You can now log in to your account.</p>
+      {% else %}
+      <h1>Invalid or Expired Link</h1>
+      <p>
+        The activation link is invalid or has expired. Please request a new
+        verification email.
+      </p>
+      {% endif %}
+    </div>
+  </body>
+</html>

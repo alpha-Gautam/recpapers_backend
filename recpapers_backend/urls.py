@@ -62,8 +62,8 @@ def check_db_health():
     except requests.exceptions.RequestException as e:
         print(f"Database health check failed: {e}")
         return
-scheduler = BackgroundScheduler()
-scheduler.add_job(func=check_db_health, trigger="interval", seconds=15)
-scheduler.start()
+# scheduler = BackgroundScheduler()
+# scheduler.add_job(func=check_db_health, trigger="interval", seconds=15)
+# scheduler.start()
     
     
