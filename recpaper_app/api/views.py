@@ -17,59 +17,7 @@ def index(request):
     print("IP address of the request:", ip)
     return JsonResponse({"message": "Hello, Hero!", "ip": ip}, status=200)
 
-class user_login(APIView):
-    permission_classes=[permissions.AllowAny]
-    def post(self, request):
-        data = request.data
-        # print("api data for user login ->",data)
-        # Check if email and password are provided
-        if("email" in data and "password" in data):
-            userData = User.objects.filter(email=data["email"]).first()  # Use first() to get a single user
-            if userData:
-                if userData.password == data["password"]:  # Compare password
-                    serializer=UserSerializer(userData)
-                    return Response(data=serializer.data, status=200)
-                else:
-                    return Response({"message": "Password is incorrect!"}, status=401)
-            else:
-                return Response({"message": "User not found! Enter rignt email"}, status=404)
 
- 
-
-class user_register(APIView):
-    def post(self, request):
-        data=request.data
-        try:
-            if(data["is_student"]==True and data["is_faculty"]==False):
-                data["role"]="STUDENT"
-                
-                serializer = UserSerializer(data=data)
-                # # print("data for user ragristration--->",data)
-                # print("afer serialize data for user ragristration--->",serializer)
-                if serializer.is_valid():
-                    serializer.save()
-                    return Response(serializer.data)
-                else:
-                    return Response(serializer.errors,status=400)
-                
-            elif(data["is_student"]==False and data["is_faculty"]==True):
-                data["role"]="FACULTY"
-
-                serializer = MentorSerializer(data=data)
-                # print("data for user ragristration--->",data)
-                # print("afer serialize data for user ragristration--->",serializer)
-                if serializer.is_valid():
-                    serializer.save()
-                    return Response(serializer.data)
-                else:
-                    return Response(serializer.errors,status=400)
-                
-                
-        except Exception as e:
-            # print("Error during ragister:- ",e)
-            return Response({"message":"something went wrong"},status=400)
-            
-        
 class user_view(APIView):
     
     def get(self, request):
@@ -83,7 +31,7 @@ class mentor_view(APIView):
         serializer = UserSerializer(mentor ,many=True)
         return Response(serializer.data)
          
-         
+      
 class User_projects_view(APIView):
     permission_classes=[permissions.AllowAny]
     def get(self,request,pk):
@@ -104,12 +52,7 @@ class project_view(APIView):
     permission_classes=[permissions.AllowAny]
     
     def get(self, request):
-        # # print("...")
-
-        # # print("request data for project view--->",request)
-        # # print("request get for project view--->",request.user)
-        
-        # # print("...")
+       
         try:
             queryset = Project.objects.filter(public=True)
 
@@ -213,14 +156,11 @@ class project_create(APIView):
  
 class verify_project(APIView):
     permission_classes=[permissions.AllowAny]
-    # authentication_classes = [authentication.SessionAuthentication]
-    # permission_classes = [permissions.IsAuthenticated]
+   
 
     def patch(self, request):
         data=request.data
-        # if not pk:
-        #     return Response({"message": "Project ID is required"}, status=400)
-        # print("data project:--",data)
+      
         try:
             # Get the faculty user
             user = User.objects.filter(id=data["user"]).first()
@@ -325,8 +265,7 @@ class Project_comments(APIView):
 class file_upload(APIView):
     permission_classes=[permissions.AllowAny]
     def get(self, request, pk):
-        # # print("user for file fetch--->",pk)
-        # # print("user for file fetch--->",request)
+
         try:
             if "user" in request.GET: 
                 user = request.GET["user"]
@@ -380,11 +319,7 @@ class file_upload(APIView):
     
     def delete(self, request, pk):
         try:
-            # file_uuid = request.query_params.get('file_uuid') or request.data.get('file_uuid')
-            # if not file_uuid:
-            #     return Response({"error": "File UUID required"}, status=400)
-            
-            # Get and delete file - storage backend handles deletion from Blob
+      
             file_instance = Files.objects.get(uuid=pk)
             re=file_instance.delete()
             if re==False:
