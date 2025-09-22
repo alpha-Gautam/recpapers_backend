@@ -1,10 +1,10 @@
 from rest_framework.response import Response
 from django.http import JsonResponse
 from rest_framework.decorators import api_view, APIView
-from recpaper_app.models import User,Student, Faculty, Project, Project_log, Comment, Files
-from recpaper_app.api.serializers import (UserSerializer, MentorSerializer, MentorLoginSerializer,
-                                          ProjectSerializer, UserLoginSerializer, ProjectLogSerializer, 
-                                          CommentSerializer, ProjectCreateSerializer, MentorCreateSerializer, 
+from recpaper_app.models import User, Project, Project_log, Comment, Files
+from recpaper_app.api.serializers import (UserSerializer, MentorSerializer,
+                                          ProjectSerializer, ProjectLogSerializer, 
+                                          CommentSerializer, ProjectCreateSerializer, 
                                           FilesSerializer)
 from rest_framework import status, authentication, permissions
 from  django.db.models import Q
@@ -18,6 +18,7 @@ def index(request):
     return JsonResponse({"message": "Hello, Hero!", "ip": ip}, status=200)
 
 class user_login(APIView):
+    permission_classes=[permissions.AllowAny]
     def post(self, request):
         data = request.data
         # print("api data for user login ->",data)
@@ -26,54 +27,13 @@ class user_login(APIView):
             userData = User.objects.filter(email=data["email"]).first()  # Use first() to get a single user
             if userData:
                 if userData.password == data["password"]:  # Compare password
-                    serializer=UserLoginSerializer(userData)
+                    serializer=UserSerializer(userData)
                     return Response(data=serializer.data, status=200)
                 else:
                     return Response({"message": "Password is incorrect!"}, status=401)
             else:
                 return Response({"message": "User not found! Enter rignt email"}, status=404)
 
-            
-        # #==================Student Login Login===================\
-            
-        #     if("role" in data and data["role"]=="Student"):
-        #         userData = User.objects.filter(email=data["email"]).first()  # Use first() to get a single user
-        #         if userData:
-        #             if userData.password == data["password"]:  # Compare password
-        #                 serializer=UserLoginSerializer(userData)
-        #                 return Response(data=serializer.data, status=200)
-        #             else:
-        #                 return Response({"message": "Password is incorrect!"}, status=401)
-        #         else:
-        #             return Response({"message": "User not found! Enter rignt email"}, status=404)
-
-        # #==================Mentor Login Login===================
-        
-        
-        #     elif("role" in data and  data["role"]=="Mentor"):
-        #         mentorData = User.objects.filter(email=data["email"]).first()  # Use first() to get a single user
-        #         if mentorData:
-        #             if mentorData.password == data["password"]:  # Compare password
-        #                 serializer=MentorLoginSerializer(mentorData)
-        #                 return Response(data=serializer.data, status=200)
-        #             else:
-        #                 return Response({"message": "Password is incorrect!"}, status=401)
-        #         else:
-        #             return Response({"message": "User not found! Enter rignt email"}, status=404)
-                    
-        #     else:
-        #         return Response({
-        #             "status":False,
-        #             "message" : "Some thing went worng please try againg"
-        #         },status=400)
-        # else:
-        #     return Response({"message": "Email and password are required!"}, status=400)
-            
-            
-        # # papers = User.objects.filter(email=pk)
-        # # serializer = UserSerializer(papers,many=True)
-        # # return Response(serializer.data)
- 
  
 
 class user_register(APIView):
@@ -95,7 +55,7 @@ class user_register(APIView):
             elif(data["is_student"]==False and data["is_faculty"]==True):
                 data["role"]="FACULTY"
 
-                serializer = MentorCreateSerializer(data=data)
+                serializer = MentorSerializer(data=data)
                 # print("data for user ragristration--->",data)
                 # print("afer serialize data for user ragristration--->",serializer)
                 if serializer.is_valid():
@@ -113,14 +73,14 @@ class user_register(APIView):
 class user_view(APIView):
     
     def get(self, request):
-        user_data = Student.objects.all()
+        user_data = User.objects.filter(role="STUDENT")
         serializer = UserSerializer(user_data,many=True)
         return Response(serializer.data)
     
 class mentor_view(APIView):
     def get(self, request):
-        mentor=Faculty.objects.all()
-        serializer = MentorSerializer(mentor ,many=True)
+        mentor=User.objects.filter(role="FACULTY")
+        serializer = UserSerializer(mentor ,many=True)
         return Response(serializer.data)
          
          

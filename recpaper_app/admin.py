@@ -1,15 +1,7 @@
 from django.contrib import admin
-from recpaper_app.models import User, Project, Project_log, Comment, Files,Faculty,Student
+from recpaper_app.models import  Project, Project_log, Comment, Files
 
 # Register your models here.
-
-# admin.site.register(User)
-@admin.register(User)
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email','mobile', 'college', 'department', 'role', 'is_active', 'verified_by_admin','created_at')
-    search_fields = ('username', 'email', 'mobile', 'college', 'department')
-    list_filter = ('role', 'is_active', 'verified_by_admin')
-
 
 # admin.site.register(Project)
 @admin.register(Project)
@@ -24,5 +16,3 @@ class ProjectAdmin(admin.ModelAdmin):
 admin.site.register(Project_log)
 admin.site.register(Comment)
 admin.site.register(Files)
-admin.site.register(Faculty)
-admin.site.register(Student)
