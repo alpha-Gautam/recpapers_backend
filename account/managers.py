@@ -29,12 +29,23 @@ class UserManager(BaseUserManager):
             extra_fields["username"] = prefix + "_" + suffix
 
         user = self.model(email=email, **extra_fields)
-        user.set_password(password)
+        if password:
+            user.set_password(password)
+            print("password is set  -->",password)
+        else:
+            user.set_unusable_password()
+            
+            print("password is not set  -->",password)
         user.save(using=self._db)
         return user
 
     def create_student(self, email, password=None, **extra_fields):
         from .models import User  # Import here to avoid circular import
+        print("email-->",email)
+        print('*'*50)
+        print("password-->",password)
+        print("*"*50)
+        print("extra_fields-->",extra_fields)
 
         user = self.create_user(
             email=email,

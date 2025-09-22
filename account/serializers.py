@@ -27,6 +27,7 @@ class UserSerializer(serializers.ModelSerializer):
         return value
     
     def create(self, validated_data):
+        # print("validated_data-->",validated_data)
         validated_data.pop("confirm_password", None)
         suffix=str(uuid.uuid4())[:8]
         if "user_id" not in validated_data:

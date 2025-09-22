@@ -24,7 +24,7 @@ class GetCookies(APIView):
         # return Response({"message": "CSRF cookie set"})
 
 # @method_decorator(csrf_protect, name="dispatch")
-@method_decorator(csrf_protect, name='dispatch')
+# @method_decorator(csrf_protect, name='dispatch')
 class LoginView(APIView):
     permission_classes = [AllowAny]
 
@@ -34,11 +34,17 @@ class LoginView(APIView):
         password = request.data.get('password')
         user = User.objects.filter(email=email).first()
         if user is not None and user.is_active == False:
-            return Response({"error": "Account is not activated. Please check your email for the activation link."}, status=status.HTTP_400_BAD_REQUEST)
+            uid=urlsafe_base64_encode(force_bytes(user.id))
+            token= default_token_generator.make_token(user)
+            activation_link = reverse('activate', kwargs={'uid': uid, 'token': token})
+            activation_url= f'{settings.SITE_DOMAIN}{activation_link}'
+            send_activation_email(user.email, activation_url)
+            return Response({"message": "Account is not activated. Please check your email for the activation link."}, status=status.HTTP_400_BAD_REQUEST)
         user = authenticate(request, email=email, password=password)
         if user is not None:
             login(request, user)
-            return Response({"message": "Login successful."}, status=status.HTTP_200_OK)
+            serialize=UserSerializer(user)
+            return Response({"message": "Login successful.","data":serialize.data}, status=status.HTTP_200_OK)
         return Response({"error": "Invalid credentials."}, status=status.HTTP_400_BAD_REQUEST)   
     
 
@@ -46,22 +52,27 @@ class LoginView(APIView):
 class RegistrationView(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
-        print("data:",request.data)
-        serializer=UserSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.create(serializer.data)
-             
-            uid=urlsafe_base64_encode(force_bytes(user.id))
-            
-            token= default_token_generator.make_token(user)
-            activation_link = reverse('activate', kwargs={'uid': uid, 'token': token})
-            activation_url= f'{settings.SITE_DOMAIN}{activation_link}'
-            print("activation link--",activation_link)
-            print("activation url--",activation_url)
-            send_activation_email(user.email, activation_url)
+        try:
+            print("data:",request.data)
+            serializer=UserSerializer(data=request.data)
+            if serializer.is_valid():
+                # print("serializer-->",serializer.data)
+                user=serializer.create(serializer.validated_data)
 
-            return Response({"message": "email verification sent successfully.","data":f'{user.email}--{user.get_full_name()}',"activation_link":activation_url}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+                uid=urlsafe_base64_encode(force_bytes(user.id))
+
+                token= default_token_generator.make_token(user)
+                activation_link = reverse('activate', kwargs={'uid': uid, 'token': token})
+                activation_url= f'{settings.SITE_DOMAIN}{activation_link}'
+                # print("activation link--",activation_link)
+                print("activation url--",activation_url)
+                send_activation_email(user.email, activation_url)
+
+                return Response({"message": "email verification sent successfully.","data":f'{user.email}--{user.get_full_name()}',"activation_link":activation_url}, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class ActivateView(APIView):
     permission_classes = [AllowAny]    
@@ -76,6 +87,7 @@ class ActivateView(APIView):
                 # return Response({"message": "Account is already activated."}, status=status.HTTP_200_OK)
                 return render(request,'account/email_verification_success.html',{'user':user,'status':'already_activated'}, status=status.HTTP_200_OK)
             user.is_active = True
+            print('user is activated', user)
             user.save()
             return render(request,'account/email_verification_success.html',{'user':user,'status':'success'}, status=status.HTTP_200_OK)
         else:
@@ -91,9 +103,12 @@ class UserDetailsView(APIView):
         return Response({"error": "Authentication required."}, status=status.HTTP_401_UNAUTHORIZED)
     
 class LogoutView(APIView):
-    # permission_classes = [AllowAny]
+    permission_classes = [AllowAny]
+    
 
     def post(self, request):
+        user = request.user
+        print('user is logged out', user)
         logout(request)
         return Response({"message": "Logout successful."}, status=status.HTTP_200_OK)
     
@@ -110,7 +125,7 @@ class ForgotPasswordView(APIView):
             reset_url = f'{settings.SITE_DOMAIN}{reset_link}'
             send_reset_password_email(user.email, reset_url)  # Implement this function to send the email
             return Response({"message": "Password reset link sent to your email."}, status=status.HTTP_200_OK)
-        return Response({"error": "Email not found."}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "Email not found."}, status=status.HTTP_404_NOT_FOUND)
 
 class ResetPasswordPageView(APIView):
     permission_classes = [AllowAny]
@@ -137,7 +152,7 @@ class ResetPasswordPageView(APIView):
         return Response({"error": "Reset link is invalid or has expired."}, status=status.HTTP_400_BAD_REQUEST)
     
     
-@method_decorator(csrf_protect, name='dispatch')
+# @method_decorator(csrf_protect, name='dispatch')
 class UpdatePasswordView(APIView):
     
     def post(self, request):

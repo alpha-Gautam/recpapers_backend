@@ -32,16 +32,29 @@ class ProjectSerializer(serializers.ModelSerializer):
     college = serializers.SerializerMethodField()
     
     def get_user(self,obj):
-        return obj.user.username
+        try:
+            return obj.user.username
+        except:
+            return None
+        # return obj.user.username
     
     def get_mentor(self,obj):
-        return obj.mentor.username
-    
+        try:
+            return obj.mentor.username
+        except:
+            return None
+
     def get_p_user(self,obj):
-        return [obj.user.uuid,obj.mentor.uuid]
+        try:
+            return [obj.user.uuid,obj.mentor.uuid]
+        except:
+            return None
     def get_college(self,obj):
-        return obj.user.college
-    
+        try:
+            return obj.user.college
+        except:
+            return None
+
     class Meta:
         model = Project
         fields = "__all__"

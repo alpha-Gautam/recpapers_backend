@@ -85,23 +85,23 @@ class mentor_view(APIView):
          
          
 class User_projects_view(APIView):
+    permission_classes=[permissions.AllowAny]
     def get(self,request,pk):
-        # user = request.user
+        # user_data=request.user
+        # print("user_data-->",user_data)
         user=pk
-        # print("user_data-->",user)
-        # # print("user_-->",user)
+        print("user-->",user)
+        
         try:
-            queryset = Project.objects.filter(Q(user__uuid__icontains=user)|Q(mentor__uuid__icontains=user))
+            queryset = Project.objects.filter(Q(user__id__icontains=user))
             serializer = ProjectSerializer(queryset,many=True)
-            return Response(data=serializer.data,status=200)
-               
-            
+            print("serializer-->",serializer.data)
+            return Response(data=serializer.data,status=200) 
         except Exception as e:
-            return Response({"message":"something went wrong","error":str(e)},status=400)
-            
-            
-    
+            return Response({"message":"something went wrong","error":str(e)},status=400)    
+
 class project_view(APIView):
+    permission_classes=[permissions.AllowAny]
     
     def get(self, request):
         # # print("...")
@@ -148,6 +148,7 @@ class project_view(APIView):
         
     
 class project_detail(APIView):
+    permission_classes=[permissions.AllowAny]
     def get(self,request,pk):
         papers = Project.objects.filter(uuid=pk)
         if not papers.exists():
@@ -169,6 +170,7 @@ class project_detail(APIView):
    
         
 class project_create(APIView):
+    permission_classes=[permissions.AllowAny]
     def post(self, request):
         try:
             data = request.data
@@ -210,6 +212,7 @@ class project_create(APIView):
  
  
 class verify_project(APIView):
+    permission_classes=[permissions.AllowAny]
     # authentication_classes = [authentication.SessionAuthentication]
     # permission_classes = [permissions.IsAuthenticated]
 
@@ -220,7 +223,7 @@ class verify_project(APIView):
         # print("data project:--",data)
         try:
             # Get the faculty user
-            user = Faculty.objects.filter(uuid=data["user"]).first()
+            user = User.objects.filter(id=data["user"]).first()
             if not user:
                 return Response({"message": "User not found or not a faculty member"}, status=404)
             
@@ -234,7 +237,7 @@ class verify_project(APIView):
                 return Response({"message": "Project not found"}, status=404)
             
             # Check if the requesting user is the mentor
-            if project.mentor and project.mentor.uuid != user.uuid:
+            if project.mentor and project.mentor.id != user.id:
                 return Response({"message": "Only the assigned project mentor can verify or change visibility the project"}, status=403)
             
             # Update the project verification status
@@ -273,6 +276,7 @@ class verify_project(APIView):
             
         
 class porject_log(APIView):
+    permission_classes=[permissions.AllowAny]
     
     def get(self, request, pk):
  
@@ -294,6 +298,7 @@ class porject_log(APIView):
     
    
 class Project_comments(APIView):
+    permission_classes=[permissions.AllowAny]
     
     def get(self, request):
     # if request.methode=="GET":
@@ -318,6 +323,7 @@ class Project_comments(APIView):
     
     
 class file_upload(APIView):
+    permission_classes=[permissions.AllowAny]
     def get(self, request, pk):
         # # print("user for file fetch--->",pk)
         # # print("user for file fetch--->",request)
@@ -332,10 +338,10 @@ class file_upload(APIView):
             project= Project.objects.filter(uuid=pk).first()
             if not project:
                 return Response({"message": "Invalid project id"}, status=400)
-            print("project user for file fetch--->",project.user.uuid)
-            print("project mentor for file fetch--->",project.mentor.uuid if project.mentor else None)
-            print("user match",user == str(project.user.uuid) or user == str(project.mentor.uuid if project.mentor else None))
-            if  user == str(project.user.uuid) or user == str(project.mentor.uuid if project.mentor else None):
+            print("project user for file fetch--->",project.user.id)
+            print("project mentor for file fetch--->",project.mentor.id if project.mentor else None)
+            print("user match",user == str(project.user.id) or user == str(project.mentor.id if project.mentor else None))
+            if  user == str(project.user.id) or user == str(project.mentor.id if project.mentor else None):
                 queryset = Files.objects.filter(project=pk)
             else:
                 queryset = Files.objects.filter(project=pk, public=True)
@@ -395,15 +401,15 @@ class file_upload(APIView):
 
 
 class file_visibility(APIView):
+    permission_classes=[permissions.AllowAny]
     # authentication_classes = [authentication.SessionAuthentication]
-    # permission_classes = [permissions.IsAuthenticated]
 
     def patch(self, request):
         data=request.data
         # print("data project:--",data)
         try:
             # Get the faculty user
-            user = Faculty.objects.filter(uuid=data["user"]).first()
+            user = User.objects.filter(id=data["user"],role='FACULTY').first()
             if not user:
                 return Response({"message": "User not found or not a faculty member"}, status=404)
             
@@ -418,7 +424,7 @@ class file_visibility(APIView):
             # Check if the requesting user is the mentor
             if not project:
                 return Response({"message": "Project not found"}, status=404)
-            if project and project.mentor and (project.mentor.uuid != user.uuid and project.user.uuid != user.uuid):
+            if project and project.mentor and (project.mentor.id != user.id and project.user.id != user.id):
                 return Response({"message": "Only project author or project mentor can change visibility the project"}, status=403)
             
             
